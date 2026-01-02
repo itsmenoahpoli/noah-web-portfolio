@@ -22,68 +22,15 @@ import {
   SiAmazons3,
 } from "react-icons/si";
 
-const experiences = [
-  {
-    company: "Selfbook",
-    role: "Frontend Engineer (Remote)",
-    location: "US - New York",
-    period: "Jul 2021 - Present",
-    responsibilities: [
-      "Developing screens and UI components for the web application using React and Tailwind.",
-      "Fixing UI issues and integrating backend APIs with Redux Saga.",
-    ],
-  },
-  {
-    company: "Wevoz",
-    role: "Full Stack Developer",
-    location: "Remote",
-    period: "Jan 2020 - Jun 2021",
-    responsibilities: [
-      "Built and maintained web applications using modern frameworks.",
-      "Collaborated with cross-functional teams to deliver high-quality products.",
-    ],
-  },
-  {
-    company: "FreeBeings",
-    role: "Software Engineer",
-    location: "Remote",
-    period: "Mar 2019 - Dec 2019",
-    responsibilities: [
-      "Developed responsive web applications.",
-      "Implemented new features and optimized performance.",
-    ],
-  },
-  {
-    company: "TDF",
-    role: "Junior Developer",
-    location: "Remote",
-    period: "Jun 2018 - Feb 2019",
-    responsibilities: [
-      "Assisted in developing web applications.",
-      "Learned and applied best practices in software development.",
-    ],
-  },
-  {
-    company: "Upwork",
-    role: "Freelance Developer",
-    location: "Remote",
-    period: "2017 - 2018",
-    responsibilities: [
-      "Completed various client projects.",
-      "Built custom solutions for diverse requirements.",
-    ],
-  },
-  {
-    company: "Shoppy",
-    role: "Frontend Developer",
-    location: "Remote",
-    period: "2016 - 2017",
-    responsibilities: [
-      "Created user interfaces for e-commerce platform.",
-      "Improved user experience and accessibility.",
-    ],
-  },
-];
+interface Experience {
+  company: string;
+  role: string;
+  location: string;
+  period: string;
+  responsibilities: string[];
+}
+
+const experiences: Experience[] = [];
 
 export default function Hero() {
   const [selectedCompany, setSelectedCompany] = useState(
@@ -166,7 +113,7 @@ export default function Hero() {
               className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
               title="Vue.js"
             >
-              <SiVuedotjs className="w-6 h-6 sm:w-8 sm:h-8 text-[#4FC08D]" />
+              <SiVuedotjs className="w-6 h-6 sm:w-8 sm:h-8 text-[#42b883]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
