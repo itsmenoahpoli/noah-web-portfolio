@@ -5,24 +5,45 @@
   --foreground: #171717;
 }
 
+.dark,
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark,
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark header nav a,
+html.dark header nav button,
+html.dark header nav svg {
+  color: white !important;
+}
+
+html.dark section p,
+html.dark section h2,
+html.dark section h3,
+html.dark section li {
+  color: white !important;
+}
+
+html.dark section button:not([class*="bg-gray-100"]) {
+  color: white !important;
 }
 
 #nprogress {
@@ -30,7 +51,7 @@ body {
 }
 
 #nprogress .bar {
-  background: #29d;
+  background: #3b82f6;
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -39,13 +60,21 @@ body {
   height: 2px;
 }
 
+.dark #nprogress .bar {
+  background: #60a5fa;
+}
+
 #nprogress .peg {
   display: block;
   position: absolute;
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #29d, 0 0 5px #29d;
+  box-shadow: 0 0 10px #3b82f6, 0 0 5px #3b82f6;
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
+}
+
+.dark #nprogress .peg {
+  box-shadow: 0 0 10px #60a5fa, 0 0 5px #60a5fa;
 }
