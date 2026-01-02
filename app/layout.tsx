@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import ProgressBar from "./components/ProgressBar";
 import { themeScript } from "./utils/theme-script";
@@ -51,7 +52,9 @@ export default function RootLayout({
             __html: themeScript,
           }}
         />
-        <ProgressBar />
+        <Suspense fallback={null}>
+          <ProgressBar />
+        </Suspense>
         {children}
       </body>
     </html>
