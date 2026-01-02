@@ -53,6 +53,18 @@ export default function Header() {
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-8">
               <a
+                href="#blogs"
+                className="text-sm font-normal text-gray-500 dark:text-white hover:text-black dark:hover:text-gray-200 transition-colors"
+              >
+                Blogs
+              </a>
+              <a
+                href="#offered-services"
+                className="text-sm font-normal text-gray-500 dark:text-white hover:text-black dark:hover:text-gray-200 transition-colors"
+              >
+                Offered Services
+              </a>
+              <a
                 href="#projects"
                 className="text-sm font-normal text-gray-500 dark:text-white hover:text-black dark:hover:text-gray-200 transition-colors"
               >
