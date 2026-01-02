@@ -34,7 +34,7 @@ const experiences: Experience[] = [];
 
 export default function Hero() {
   const [selectedCompany, setSelectedCompany] = useState(
-    experiences[0].company
+    experiences[0]?.company
   );
   const selectedExperience =
     experiences.find((exp) => exp.company === selectedCompany) ||
@@ -52,7 +52,7 @@ export default function Hero() {
           <p className="text-base sm:text-lg text-gray-700 dark:text-white">
             Hey, I'm
           </p>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-tight">
             {/* <span className="bg-linear-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent">
             </span> */}
             Patrick Niño Noah W Policarpio
@@ -220,9 +220,9 @@ export default function Hero() {
           <h2 className="text-sm sm:text-base font-semibold uppercase tracking-wider text-gray-500 dark:text-white mb-6">
             Experience
           </h2>
-
-          <div className="flex flex-wrap gap-2 sm:gap-3 mb-8 overflow-x-auto pb-2 -mx-6 sm:mx-0 px-6 sm:px-0">
-            {experiences.map((exp) => (
+          &mdash;
+          {/* <div className="flex flex-wrap gap-2 sm:gap-3 mb-8 overflow-x-auto pb-2 -mx-6 sm:mx-0 px-6 sm:px-0">
+            {experiences?.map((exp) => (
               <button
                 key={exp.company}
                 onClick={() => setSelectedCompany(exp.company)}
@@ -246,18 +246,18 @@ export default function Hero() {
           >
             <div>
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-1">
-                {selectedExperience.role}
+                {selectedExperience?.role}
               </h3>
               <p className="text-sm sm:text-base text-gray-600 dark:text-white">
-                {selectedExperience.company} / {selectedExperience.location}
+                {selectedExperience?.company} / {selectedExperience?.location}
               </p>
               <p className="text-sm sm:text-base text-gray-500 dark:text-gray-200 mt-1">
-                {selectedExperience.period}
+                {selectedExperience?.period}
               </p>
             </div>
 
             <ul className="space-y-2 pl-4">
-              {selectedExperience.responsibilities.map(
+              {selectedExperience?.responsibilities.map(
                 (responsibility, index) => (
                   <li
                     key={index}
@@ -268,7 +268,7 @@ export default function Hero() {
                 )
               )}
             </ul>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
       </div>
     </section>
