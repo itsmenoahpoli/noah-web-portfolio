@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import ProgressBar from "./components/ProgressBar";
 import Footer from "./components/Footer";
+import Cursor from "./components/AnimatedCursor";
 import { themeScript } from "./utils/theme-script";
 import { ThemeProvider } from "../contexts/ThemeContext";
 
@@ -55,6 +56,7 @@ export default function RootLayout({
           }}
         />
         <ThemeProvider>
+          <Cursor />
           <Suspense fallback={null}>
             <ProgressBar />
           </Suspense>
