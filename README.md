@@ -29,9 +29,8 @@ This portfolio website represents the professional work and experience of Patric
 - **Styling**: Tailwind CSS v4
 - **Animations**: Framer Motion
 - **Icons**: React Icons
-- **UI Components**: Radix UI
 - **Progress Bar**: NProgress
-- **Fonts**: Geist Sans & Geist Mono
+- **Fonts**: Inter (Google Fonts)
 
 ## Getting Started
 

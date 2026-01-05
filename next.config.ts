@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
+  reactStrictMode: true,
+  compress: true,
+  poweredByHeader: false,
 };
 
 export default nextConfig;

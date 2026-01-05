@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { FaGithub } from "react-icons/fa";
-import { HiLink } from "react-icons/hi2";
+import { HiLink, HiClock } from "react-icons/hi2";
 import Link from "next/link";
 import Image from "next/image";
 import { projects, getTagColor } from "../utils/projects";
@@ -21,83 +21,96 @@ export default function Projects() {
       <h2 className="text-sm sm:text-base font-semibold uppercase tracking-wider text-gray-500 dark:text-white mb-6">
         Projects
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
-        {displayedProjects.map((project, index) => (
-          <motion.div
-            key={project.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.05 }}
-            className="group cursor-pointer h-full"
-          >
-            <div className="relative overflow-hidden rounded-lg bg-white dark:bg-gray-950 h-full flex flex-col">
-              <div className="aspect-[4/3] relative overflow-hidden shrink-0 bg-gray-100 dark:bg-gray-900">
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 dark:group-hover:bg-black/20 transition-colors" />
-              </div>
-              <div className="p-4 flex flex-col grow">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-base font-semibold text-gray-900 dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
-                    {project.title}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={project.githubUrl}
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                      aria-label="GitHub"
-                    >
-                      <FaGithub className="w-4 h-4" />
-                    </a>
-                    <a
-                      href={project.liveUrl}
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                      aria-label="Live Demo"
-                    >
-                      <HiLink className="w-4 h-4" />
-                    </a>
+      {displayedProjects.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <HiClock className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-4" />
+          <p className="text-gray-500 dark:text-gray-400 text-base">
+            Will be uploaded soon
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
+            {displayedProjects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                className="group cursor-pointer h-full"
+              >
+                <div className="relative overflow-hidden rounded-lg bg-white dark:bg-gray-950 h-full flex flex-col">
+                  <div className="aspect-[4/3] relative overflow-hidden shrink-0 bg-gray-100 dark:bg-gray-900">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 dark:group-hover:bg-black/20 transition-colors" />
+                  </div>
+                  <div className="p-4 flex flex-col grow">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-base font-semibold text-gray-900 dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
+                        {project.title}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={project.githubUrl}
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                          aria-label="GitHub"
+                        >
+                          <FaGithub className="w-4 h-4" />
+                        </a>
+                        <a
+                          href={project.liveUrl}
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                          aria-label="Live Demo"
+                        >
+                          <HiLink className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-white mb-3 line-clamp-2 grow">
+                      {project.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      {project.technologies
+                        .split(" - ")
+                        .map((tech, techIndex) => (
+                          <span
+                            key={techIndex}
+                            className={`text-xs px-2 py-1 rounded ${getTagColor(
+                              tech
+                            )}`}
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                    </div>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-white mb-3 line-clamp-2 grow">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.technologies.split(" - ").map((tech, techIndex) => (
-                    <span
-                      key={techIndex}
-                      className={`text-xs px-2 py-1 rounded ${getTagColor(
-                        tech
-                      )}`}
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+              </motion.div>
+            ))}
+          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            className="flex justify-center mt-8"
+          >
+            <Link
+              href="/projects"
+              className="px-6 py-3 text-base font-medium text-slate-900 dark:text-white bg-transparent border border-slate-900 dark:border-white rounded-full hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors"
+            >
+              See All
+            </Link>
           </motion.div>
-        ))}
-      </div>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.3 }}
-        className="flex justify-center mt-8"
-      >
-        <Link
-          href="/projects"
-          className="px-6 py-3 text-base font-medium text-slate-900 dark:text-white bg-transparent border border-slate-900 dark:border-white rounded-full hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors"
-        >
-          See All
-        </Link>
-      </motion.div>
+        </>
+      )}
     </motion.div>
   );
 }

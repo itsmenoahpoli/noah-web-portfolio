@@ -5,20 +5,13 @@ import { HiSun, HiMoon } from "react-icons/hi2";
 import Hamburger from "hamburger-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { initializeTheme, toggleTheme, type Theme } from "../utils/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export default function Header() {
   const pathname = usePathname();
+  const { theme, toggle: handleToggleTheme, mounted } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const initialTheme = initializeTheme();
-    setThemeState(initialTheme);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,11 +33,6 @@ export default function Header() {
       document.body.style.overflow = "unset";
     };
   }, [isMenuOpen]);
-
-  const handleToggleTheme = () => {
-    const newTheme = toggleTheme(theme);
-    setThemeState(newTheme);
-  };
 
   const handleNavClick = () => {
     setIsMenuOpen(false);
@@ -94,14 +82,6 @@ export default function Header() {
                       : "text-gray-500 dark:text-white hover:text-black dark:hover:text-gray-200"
                   }`;
 
-                  if (pathname === "/") {
-                    return (
-                      <a key={link.href} href={link.href} className={className}>
-                        {link.label}
-                      </a>
-                    );
-                  }
-
                   return (
                     <Link
                       key={link.href}
@@ -116,14 +96,14 @@ export default function Header() {
 
               <button
                 onClick={handleToggleTheme}
-                className="hidden p-2 text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                className="p-2 text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                 aria-label="Toggle theme"
               >
                 {mounted &&
                   (theme === "dark" ? (
-                    <HiSun className="w-5 h-5 text-white" />
+                    <HiSun className="w-5 h-5" />
                   ) : (
-                    <HiMoon className="w-5 h-5 text-black dark:text-white" />
+                    <HiMoon className="w-5 h-5" />
                   ))}
               </button>
 
@@ -151,19 +131,6 @@ export default function Header() {
                   : "text-black dark:text-white hover:opacity-70"
               }`;
 
-              if (pathname === "/") {
-                return (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={handleNavClick}
-                    className={className}
-                  >
-                    {link.label}
-                  </a>
-                );
-              }
-
               return (
                 <Link
                   key={link.href}
@@ -175,6 +142,18 @@ export default function Header() {
                 </Link>
               );
             })}
+            <button
+              onClick={handleToggleTheme}
+              className="p-3 text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+              aria-label="Toggle theme"
+            >
+              {mounted &&
+                (theme === "dark" ? (
+                  <HiSun className="w-6 h-6" />
+                ) : (
+                  <HiMoon className="w-6 h-6" />
+                ))}
+            </button>
           </div>
         </div>
       )}

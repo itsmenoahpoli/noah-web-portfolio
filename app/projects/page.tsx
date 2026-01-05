@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { FaGithub } from "react-icons/fa";
-import { HiLink, HiArrowLeft } from "react-icons/hi2";
+import { HiLink, HiArrowLeft, HiClock } from "react-icons/hi2";
 import Link from "next/link";
 import Image from "next/image";
 import Header from "../components/Header";
@@ -35,8 +35,16 @@ export default function ProjectsPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {projects.map((project, index) => (
+          {projects.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <HiClock className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-4" />
+              <p className="text-gray-500 dark:text-gray-400 text-base">
+                Will be uploaded soon
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {projects.map((project, index) => (
               <motion.div
                 key={project.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -99,8 +107,9 @@ export default function ProjectsPage() {
                   </div>
                 </div>
               </motion.div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

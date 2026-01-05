@@ -20,6 +20,9 @@ import {
   SiDocker,
   SiServerless,
   SiAmazons3,
+  SiPython,
+  SiFastapi,
+  SiDjango,
 } from "react-icons/si";
 
 interface Experience {
@@ -103,108 +106,129 @@ export default function Hero() {
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-4 sm:gap-6">
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="React"
             >
               <SiReact className="w-6 h-6 sm:w-8 sm:h-8 text-[#61DAFB]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="Vue.js"
             >
               <SiVuedotjs className="w-6 h-6 sm:w-8 sm:h-8 text-[#42b883]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="Node.js"
             >
               <SiNodedotjs className="w-6 h-6 sm:w-8 sm:h-8 text-[#339933]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="NestJS"
             >
               <SiNestjs className="w-6 h-6 sm:w-8 sm:h-8 text-[#E0234E]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="Laravel"
             >
               <SiLaravel className="w-6 h-6 sm:w-8 sm:h-8 text-[#FF2D20]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="TypeScript"
             >
               <SiTypescript className="w-6 h-6 sm:w-8 sm:h-8 text-[#3178C6]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="JavaScript"
             >
               <SiJavascript className="w-6 h-6 sm:w-8 sm:h-8 text-[#F7DF1E]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="Tailwind CSS"
             >
               <SiTailwindcss className="w-6 h-6 sm:w-8 sm:h-8 text-[#06B6D4]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="Next.js"
             >
               <SiNextdotjs className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 dark:text-white" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="MongoDB"
             >
               <SiMongodb className="w-6 h-6 sm:w-8 sm:h-8 text-[#47A248]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="PostgreSQL"
             >
               <SiPostgresql className="w-6 h-6 sm:w-8 sm:h-8 text-[#4169E1]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="AWS"
             >
               <SiAmazon className="w-6 h-6 sm:w-8 sm:h-8 text-[#FF9900]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="Docker"
             >
               <SiDocker className="w-6 h-6 sm:w-8 sm:h-8 text-[#2496ED]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="Serverless"
             >
               <SiServerless className="w-6 h-6 sm:w-8 sm:h-8 text-[#FD5750]" />
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.1 }}
-              className="flex items-center justify-center p-3 sm:p-4 bg-white dark:bg-gray-950 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors border border-gray-200 dark:border-gray-800"
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
               title="AWS S3"
             >
               <SiAmazons3 className="w-6 h-6 sm:w-8 sm:h-8 text-[#569A31]" />
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
+              title="Python"
+            >
+              <SiPython className="w-6 h-6 sm:w-8 sm:h-8 text-[#3776AB]" />
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
+              title="FastAPI"
+            >
+              <SiFastapi className="w-6 h-6 sm:w-8 sm:h-8 text-[#009688]" />
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
+              title="Django"
+            >
+              <SiDjango className="w-6 h-6 sm:w-8 sm:h-8 text-[#092E20]" />
             </motion.div>
           </div>
         </motion.div>

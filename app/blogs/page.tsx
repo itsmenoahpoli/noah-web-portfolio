@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { HiArrowLeft } from "react-icons/hi2";
 import Link from "next/link";
 import Header from "../components/Header";
+import { blogs } from "../utils/blogs";
 
 export default function BlogsPage() {
   return (
@@ -15,7 +16,7 @@ export default function BlogsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mb-8"
+            className="mb-12"
           >
             <Link
               href="/"
@@ -32,16 +33,37 @@ export default function BlogsPage() {
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center py-20"
-          >
-            <p className="text-gray-500 dark:text-gray-400">
-              Coming soon...
-            </p>
-          </motion.div>
+          {blogs.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-center py-20"
+            >
+              <p className="text-gray-500 dark:text-gray-400 text-base">
+                No posts available yet
+              </p>
+            </motion.div>
+          ) : (
+            <div className="space-y-8">
+              {blogs.map((blog, index) => (
+                <motion.div
+                  key={blog.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className="p-6 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow"
+                >
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    {blog.title}
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    {blog.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

@@ -3,7 +3,9 @@ import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import ProgressBar from "./components/ProgressBar";
+import Footer from "./components/Footer";
 import { themeScript } from "./utils/theme-script";
+import { ThemeProvider } from "../contexts/ThemeContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -52,10 +54,13 @@ export default function RootLayout({
             __html: themeScript,
           }}
         />
-        <Suspense fallback={null}>
-          <ProgressBar />
-        </Suspense>
-        {children}
+        <ThemeProvider>
+          <Suspense fallback={null}>
+            <ProgressBar />
+          </Suspense>
+          {children}
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
