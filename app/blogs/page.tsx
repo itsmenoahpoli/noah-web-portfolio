@@ -4,9 +4,29 @@ import { motion } from "framer-motion";
 import { HiArrowLeft } from "react-icons/hi2";
 import Link from "next/link";
 import Header from "../components/Header";
-import { blogs } from "../utils/blogs";
+import { useQuery } from "@tanstack/react-query";
+
+interface Blog {
+  id: string;
+  title: string;
+  description: string;
+  content: string;
+  author: string;
+  tags: string[];
+  image?: string;
+  slug: string;
+  publishedAt: string;
+}
 
 export default function BlogsPage() {
+  const { data: blogs = [], isLoading } = useQuery<Blog[]>({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      const res = await fetch("/api/blogs");
+      return res.json();
+    },
+  });
+
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
       <Header />
@@ -33,7 +53,11 @@ export default function BlogsPage() {
             </p>
           </motion.div>
 
-          {blogs.length === 0 ? (
+          {isLoading ? (
+             <div className="flex justify-center py-20">
+               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+             </div>
+          ) : blogs.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -54,12 +78,19 @@ export default function BlogsPage() {
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   className="p-6 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow"
                 >
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                    {blog.title}
-                  </h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                  <Link href={`/blogs/${blog.slug}`}>
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 cursor-pointer hover:text-blue-500 transition-colors">
+                      {blog.title}
+                    </h2>
+                  </Link>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                     {blog.description}
                   </p>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                    <span>{new Date(blog.publishedAt).toLocaleDateString()}</span>
+                    <span>•</span>
+                    <span>{blog.author}</span>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -69,4 +100,3 @@ export default function BlogsPage() {
     </div>
   );
 }
-

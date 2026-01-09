@@ -6,9 +6,28 @@ import { HiLink, HiArrowLeft, HiClock } from "react-icons/hi2";
 import Link from "next/link";
 import Image from "next/image";
 import Header from "../components/Header";
-import { projects, getTagColor } from "../utils/projects";
+import { getTagColor } from "@/utils/projects";
+import { useQuery } from "@tanstack/react-query";
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  technologies: string;
+  githubUrl: string;
+  liveUrl: string;
+}
 
 export default function ProjectsPage() {
+  const { data: projects = [], isLoading } = useQuery<Project[]>({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const res = await fetch("/api/projects");
+      return res.json();
+    },
+  });
+
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
       <Header />
@@ -35,7 +54,11 @@ export default function ProjectsPage() {
             </p>
           </motion.div>
 
-          {projects.length === 0 ? (
+          {isLoading ? (
+             <div className="flex justify-center py-20">
+               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+             </div>
+          ) : projects.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20">
               <HiClock className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-4" />
               <p className="text-gray-500 dark:text-gray-400 text-base">
@@ -55,7 +78,7 @@ export default function ProjectsPage() {
                 <div className="relative overflow-hidden rounded-lg bg-white dark:bg-gray-950 h-full flex flex-col hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
                   <div className="aspect-[4/3] relative overflow-hidden shrink-0 bg-gray-100 dark:bg-gray-900">
                     <Image
-                      src={project.image}
+                      src={project.image || "/next.svg"}
                       alt={project.title}
                       fill
                       className="object-cover"
@@ -92,15 +115,15 @@ export default function ProjectsPage() {
                     </p>
                     <div className="flex flex-wrap gap-2 mt-auto">
                       {project.technologies
-                        .split(" - ")
+                        .split(",")
                         .map((tech, techIndex) => (
                           <span
                             key={techIndex}
                             className={`text-xs px-2 py-1 rounded ${getTagColor(
-                              tech
+                              tech.trim()
                             )}`}
                           >
-                            {tech}
+                            {tech.trim()}
                           </span>
                         ))}
                     </div>

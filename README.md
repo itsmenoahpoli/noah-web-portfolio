@@ -31,6 +31,9 @@ This portfolio website represents the professional work and experience of Patric
 - **Icons**: React Icons
 - **Progress Bar**: NProgress
 - **Fonts**: Inter (Google Fonts)
+- **Database**: MongoDB with Prisma ORM
+- **State Management**: TanStack React Query v5
+- **Forms & Validation**: Formik + Zod
 
 ## Getting Started
 
@@ -48,7 +51,37 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Database Management
+
+This project uses Prisma with MongoDB. Since MongoDB is a NoSQL database, traditional migrations are not used. Instead, use `db push` to sync your schema.
+
+### Commands
+
+- **Sync Schema**: Push your `prisma/schema.prisma` changes to the database.
+  ```bash
+  npx prisma db push
+  ```
+
+- **Generate Client**: Regenerate the Prisma client after schema changes.
+  ```bash
+  npx prisma generate
+  ```
+
+- **Prisma Studio**: Open a GUI to view and edit your data.
+  ```bash
+  npx prisma studio
+  ```
+
+## CMS Dashboard
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+## CMS Dashboard
+
+The project includes a custom CMS at `/self-dashboard` to manage projects, blogs, and experiences.
+
+- **Authentication**: Credentials are stored in `.env` (`DASHBOARD_USERNAME`, `DASHBOARD_PASSWORD`).
+- **Middleware**: Secure routes are protected by JWT authentication via `middleware.ts`.
 
 ## Project Structure
 
