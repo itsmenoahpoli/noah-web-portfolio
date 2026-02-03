@@ -64,7 +64,7 @@ export default function Projects() {
                 className="group cursor-pointer h-full"
               >
                 <div className="relative overflow-hidden rounded-lg bg-white dark:bg-gray-950 h-full flex flex-col">
-                  <div className="aspect-[4/3] relative overflow-hidden shrink-0 bg-gray-100 dark:bg-gray-900">
+                  <div className="aspect-4/3 relative overflow-hidden shrink-0 bg-gray-100 dark:bg-gray-900">
                     <Image
                       src={project.image || "/next.svg"}
                       alt={project.title}

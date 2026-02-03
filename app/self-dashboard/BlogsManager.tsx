@@ -292,9 +292,7 @@ export default function BlogsManager() {
                 </div>
               )}
               <div>
-                <h3 className="font-medium text-[var(--foreground)]">
-                  {blog.title}
-                </h3>
+                <h3 className="font-medium text-foreground">{blog.title}</h3>
                 <p className="text-gray-400 text-xs mt-0.5">/{blog.slug}</p>
               </div>
             </div>
