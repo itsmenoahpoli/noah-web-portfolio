@@ -46,12 +46,13 @@ export default function BlogsManager() {
     mutationFn: async (values: any) => {
       const method = values.id ? "PUT" : "POST";
       const url = values.id ? `/api/blogs/${values.id}` : "/api/blogs";
-      
+
       const payload = {
         ...values,
-        tags: typeof values.tags === "string" 
-          ? values.tags.split(",").map((t: string) => t.trim()) 
-          : values.tags
+        tags:
+          typeof values.tags === "string"
+            ? values.tags.split(",").map((t: string) => t.trim())
+            : values.tags,
       };
 
       const res = await fetch(url, {
@@ -104,14 +105,20 @@ export default function BlogsManager() {
             author: editingBlog?.author || "",
             description: editingBlog?.description || "",
             content: editingBlog?.content || "",
-            tags: editingBlog?.tags?.join(", ") || "",
+            tags: Array.isArray(editingBlog?.tags)
+              ? editingBlog?.tags.join(", ")
+              : "",
             image: editingBlog?.image || "",
           }}
           validationSchema={toFormikValidationSchema(blogSchema)}
-          onSubmit={(values) => mutation.mutate({ ...values, id: editingBlog?.id })}
+          onSubmit={(values) =>
+            mutation.mutate({ ...values, id: editingBlog?.id })
+          }
         >
           {({ isSubmitting, setFieldValue, values, handleChange }) => {
-            const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const handleTitleChange = (
+              e: React.ChangeEvent<HTMLInputElement>
+            ) => {
               handleChange(e);
               const generatedSlug = e.target.value
                 .toLowerCase()
@@ -125,76 +132,118 @@ export default function BlogsManager() {
             return (
               <Form className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 dark:bg-black/40 p-6 rounded-xl border border-gray-100 dark:border-gray-800">
                 <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Title</label>
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Title
+                  </label>
                   <Field
                     name="title"
                     placeholder="Blog Title"
                     onChange={handleTitleChange}
                     className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
                   />
-                  <ErrorMessage name="title" component="div" className="text-red-500 text-[10px] font-medium" />
+                  <ErrorMessage
+                    name="title"
+                    component="div"
+                    className="text-red-500 text-[10px] font-medium"
+                  />
                 </div>
 
                 <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Slug (Auto-generated)</label>
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Slug (Auto-generated)
+                  </label>
                   <Field
                     name="slug"
                     placeholder="blog-title-url"
                     className="bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm text-gray-500 cursor-not-allowed focus:outline-none"
                     readOnly
                   />
-                  <ErrorMessage name="slug" component="div" className="text-red-500 text-[10px] font-medium" />
+                  <ErrorMessage
+                    name="slug"
+                    component="div"
+                    className="text-red-500 text-[10px] font-medium"
+                  />
                 </div>
 
                 <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Author</label>
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Author
+                  </label>
                   <Field
                     name="author"
                     placeholder="Author Name"
                     className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
                   />
-                  <ErrorMessage name="author" component="div" className="text-red-500 text-[10px] font-medium" />
+                  <ErrorMessage
+                    name="author"
+                    component="div"
+                    className="text-red-500 text-[10px] font-medium"
+                  />
                 </div>
 
                 <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Tags</label>
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Tags
+                  </label>
                   <Field
                     name="tags"
                     placeholder="Tech, Life, Coding"
                     className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
                   />
-                  <ErrorMessage name="tags" component="div" className="text-red-500 text-[10px] font-medium" />
+                  <ErrorMessage
+                    name="tags"
+                    component="div"
+                    className="text-red-500 text-[10px] font-medium"
+                  />
                 </div>
 
                 <div className="flex flex-col space-y-2 md:col-span-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Feature Image</label>
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Feature Image
+                  </label>
                   <ImageUpload
                     currentImage={values.image}
                     onUpload={(path) => setFieldValue("image", path)}
                   />
-                  <ErrorMessage name="image" component="div" className="text-red-500 text-[10px] font-medium" />
+                  <ErrorMessage
+                    name="image"
+                    component="div"
+                    className="text-red-500 text-[10px] font-medium"
+                  />
                 </div>
 
                 <div className="flex flex-col space-y-2 md:col-span-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Description</label>
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Description
+                  </label>
                   <Field
                     as="textarea"
                     name="description"
                     placeholder="Short summary of the blog..."
                     className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all h-20 resize-none"
                   />
-                  <ErrorMessage name="description" component="div" className="text-red-500 text-[10px] font-medium" />
+                  <ErrorMessage
+                    name="description"
+                    component="div"
+                    className="text-red-500 text-[10px] font-medium"
+                  />
                 </div>
 
                 <div className="flex flex-col space-y-2 md:col-span-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Content</label>
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Content
+                  </label>
                   <Field
                     as="textarea"
                     name="content"
                     placeholder="Write your blog content here..."
                     className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all h-64 resize-none"
                   />
-                  <ErrorMessage name="content" component="div" className="text-red-500 text-[10px] font-medium" />
+                  <ErrorMessage
+                    name="content"
+                    component="div"
+                    className="text-red-500 text-[10px] font-medium"
+                  />
                 </div>
 
                 <div className="flex space-x-3 md:col-span-2 pt-2">
@@ -224,11 +273,18 @@ export default function BlogsManager() {
 
       <div className="grid grid-cols-1 gap-3">
         {blogs.map((blog) => (
-          <div key={blog.id} className="group flex justify-between items-center bg-white dark:bg-white/5 p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-all">
+          <div
+            key={blog.id}
+            className="group flex justify-between items-center bg-white dark:bg-white/5 p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-all"
+          >
             <div className="flex items-center space-x-4">
               {blog.image ? (
                 <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-gray-100 dark:border-gray-800">
-                  <img src={blog.image} alt="" className="w-full h-full object-cover" />
+                  <img
+                    src={blog.image}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               ) : (
                 <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center shrink-0 border border-gray-100 dark:border-gray-800 text-gray-400 text-xs">
@@ -236,7 +292,9 @@ export default function BlogsManager() {
                 </div>
               )}
               <div>
-                <h3 className="font-medium text-[var(--foreground)]">{blog.title}</h3>
+                <h3 className="font-medium text-[var(--foreground)]">
+                  {blog.title}
+                </h3>
                 <p className="text-gray-400 text-xs mt-0.5">/{blog.slug}</p>
               </div>
             </div>

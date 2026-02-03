@@ -19,14 +19,16 @@ interface Project {
 }
 
 export default function Projects() {
-  const { data: projects = [], isLoading } = useQuery<Project[]>({
+  const { data: projectsData, isLoading } = useQuery<Project[]>({
     queryKey: ["projects"],
     queryFn: async () => {
       const res = await fetch("/api/projects");
+      if (!res.ok) throw new Error("Failed to fetch projects");
       return res.json();
     },
   });
 
+  const projects = Array.isArray(projectsData) ? projectsData : [];
   const displayedProjects = projects.slice(0, 4);
 
   return (
@@ -46,9 +48,8 @@ export default function Projects() {
         </div>
       ) : displayedProjects.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
-          <HiClock className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-4" />
           <p className="text-gray-500 dark:text-gray-400 text-base">
-            Will be uploaded soon
+            No data to show
           </p>
         </div>
       ) : (

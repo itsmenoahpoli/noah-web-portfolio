@@ -19,13 +19,16 @@ interface Blog {
 }
 
 export default function BlogsPage() {
-  const { data: blogs = [], isLoading } = useQuery<Blog[]>({
+  const { data: blogsData, isLoading } = useQuery<Blog[]>({
     queryKey: ["blogs"],
     queryFn: async () => {
       const res = await fetch("/api/blogs");
+      if (!res.ok) throw new Error("Failed to fetch blogs");
       return res.json();
     },
   });
+
+  const blogs = Array.isArray(blogsData) ? blogsData : [];
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
@@ -54,9 +57,9 @@ export default function BlogsPage() {
           </motion.div>
 
           {isLoading ? (
-             <div className="flex justify-center py-20">
-               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-             </div>
+            <div className="flex justify-center py-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            </div>
           ) : blogs.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -64,8 +67,8 @@ export default function BlogsPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-center py-20"
             >
-              <p className="text-gray-500 dark:text-gray-400 text-base">
-                No posts available yet
+              <p className="text-gray-500 dark:text-gray-400 text-base text-ce">
+                No data to show
               </p>
             </motion.div>
           ) : (
@@ -87,7 +90,9 @@ export default function BlogsPage() {
                     {blog.description}
                   </p>
                   <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                    <span>{new Date(blog.publishedAt).toLocaleDateString()}</span>
+                    <span>
+                      {new Date(blog.publishedAt).toLocaleDateString()}
+                    </span>
                     <span>•</span>
                     <span>{blog.author}</span>
                   </div>
