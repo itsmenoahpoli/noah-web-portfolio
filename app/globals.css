@@ -55,7 +55,9 @@ html.dark {
 
 body {
   font-family: var(--font-inter), sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .dark,
@@ -104,13 +106,17 @@ html.dark section button:not([class*="bg-gray-100"]) {
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #3b82f6, 0 0 5px #3b82f6;
+  box-shadow:
+    0 0 10px #3b82f6,
+    0 0 5px #3b82f6;
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
 }
 
 .dark #nprogress .peg {
-  box-shadow: 0 0 10px #60a5fa, 0 0 5px #60a5fa;
+  box-shadow:
+    0 0 10px #60a5fa,
+    0 0 5px #60a5fa;
 }
 
 :root {
@@ -195,7 +201,8 @@ html.dark section button:not([class*="bg-gray-100"]) {
 }
 
 body {
-  background: repeating-linear-gradient(
+  background:
+    repeating-linear-gradient(
       90deg,
       #f1f1f1 0,
       #f1f1f1 5%,
@@ -218,4 +225,5 @@ html.dark body {
   background: var(--background);
   background-image: none;
   background-size: auto;
+  background-position: fixed !important;
 }

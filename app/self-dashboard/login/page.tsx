@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { parseApiError } from "@/lib/api-error";
 import Header from "../../components/Header";
 
 export default function LoginPage() {
@@ -24,13 +26,17 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
+        toast.success("Signed in");
         router.push("/self-dashboard");
       } else {
-        const data = await res.json();
-        setError(data.error || "Login failed");
+        const msg = await parseApiError(res, "Login failed");
+        setError(msg);
+        toast.error(msg);
       }
-    } catch (err) {
-      setError("An error occurred");
+    } catch {
+      const msg = "Could not reach the server";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

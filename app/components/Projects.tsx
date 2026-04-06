@@ -54,7 +54,7 @@ export default function Projects() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-8">
             {displayedProjects.map((project, index) => (
               <motion.div
                 key={project.id}
@@ -108,7 +108,7 @@ export default function Projects() {
                           <span
                             key={techIndex}
                             className={`text-xs px-2 py-1 rounded ${getTagColor(
-                              tech.trim()
+                              tech.trim(),
                             )}`}
                           >
                             {tech.trim()}

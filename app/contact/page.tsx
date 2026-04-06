@@ -22,7 +22,7 @@ export default function ContactPage() {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     setFormData({
       ...formData,
@@ -53,12 +53,12 @@ export default function ContactPage() {
                 CONTACT US
               </p>
               <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Get in touch with sales
+                In need of a website? mobile application? or a software
+                solution?
               </h1>
               <p className="text-base text-gray-600 dark:text-gray-400 mb-8">
-                We'll help you find the right solutions and pricing for your
-                business. Fill out the form below and our team will get back to
-                you shortly.
+                Fill out the form below and our team will get back to you
+                shortly.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">

@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z } from "zod";
+import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { parseApiError } from "@/lib/api-error";
 
 interface Experience {
   id: string;
@@ -12,7 +14,7 @@ interface Experience {
   position: string;
   location: string;
   startDate: string;
-  endDate: string;
+  endDate: string | null;
   description: string;
 }
 
@@ -34,6 +36,11 @@ export default function ExperiencesManager() {
     queryKey: ["experiences"],
     queryFn: async () => {
       const res = await fetch("/api/experiences");
+      if (!res.ok) {
+        const msg = await parseApiError(res, "Failed to fetch experiences");
+        toast.error(msg);
+        throw new Error(msg);
+      }
       return res.json();
     },
   });
@@ -47,23 +54,37 @@ export default function ExperiencesManager() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      if (!res.ok) throw new Error("Failed to save experience");
+      if (!res.ok) {
+        const msg = await parseApiError(res, "Failed to save experience");
+        throw new Error(msg);
+      }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      toast.success(variables.id ? "Experience updated" : "Experience added");
       queryClient.invalidateQueries({ queryKey: ["experiences"] });
       setIsEditing(false);
       setEditingExperience(null);
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to save experience");
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/experiences/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete experience");
+      if (!res.ok) {
+        const msg = await parseApiError(res, "Failed to delete experience");
+        throw new Error(msg);
+      }
     },
     onSuccess: () => {
+      toast.success("Experience deleted");
       queryClient.invalidateQueries({ queryKey: ["experiences"] });
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to delete experience");
     },
   });
 
@@ -91,7 +112,7 @@ export default function ExperiencesManager() {
             position: editingExperience?.position || "",
             location: editingExperience?.location || "",
             startDate: editingExperience?.startDate || "",
-            endDate: editingExperience?.endDate || "",
+            endDate: editingExperience?.endDate ?? "",
             description: editingExperience?.description || "",
           }}
           validationSchema={toFormikValidationSchema(experienceSchema)}

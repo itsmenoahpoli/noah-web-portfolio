@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z } from "zod";
+import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { parseApiError } from "@/lib/api-error";
 import ImageUpload from "./ImageUpload";
 
 interface Blog {
@@ -14,7 +16,7 @@ interface Blog {
   content: string;
   author: string;
   tags: string[];
-  image: string;
+  image: string | null;
   slug: string;
   publishedAt: string;
 }
@@ -38,6 +40,11 @@ export default function BlogsManager() {
     queryKey: ["blogs"],
     queryFn: async () => {
       const res = await fetch("/api/blogs");
+      if (!res.ok) {
+        const msg = await parseApiError(res, "Failed to fetch blogs");
+        toast.error(msg);
+        throw new Error(msg);
+      }
       return res.json();
     },
   });
@@ -60,23 +67,37 @@ export default function BlogsManager() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Failed to save blog");
+      if (!res.ok) {
+        const msg = await parseApiError(res, "Failed to save blog");
+        throw new Error(msg);
+      }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      toast.success(variables.id ? "Blog updated" : "Blog published");
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
       setIsEditing(false);
       setEditingBlog(null);
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to save blog");
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/blogs/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete blog");
+      if (!res.ok) {
+        const msg = await parseApiError(res, "Failed to delete blog");
+        throw new Error(msg);
+      }
     },
     onSuccess: () => {
+      toast.success("Blog deleted");
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to delete blog");
     },
   });
 

@@ -1,27 +1,55 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { prismaErrorMessage } from "@/lib/prisma-error";
+import { experienceBodySchema } from "@/lib/validations/cms";
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    let json: unknown;
+    try {
+      json = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const parsed = experienceBodySchema.safeParse(json);
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          issues: z.flattenError(parsed.error),
+        },
+        { status: 400 }
+      );
+    }
+
     const { id } = await params;
-    const body = await request.json();
     const experience = await prisma.experience.update({
       where: { id },
       data: {
-        company: body.company,
-        position: body.position,
-        location: body.location,
-        startDate: body.startDate,
-        endDate: body.endDate,
-        description: body.description,
+        company: parsed.data.company,
+        position: parsed.data.position,
+        location: parsed.data.location,
+        startDate: parsed.data.startDate,
+        endDate: parsed.data.endDate,
+        description: parsed.data.description,
       },
     });
     return NextResponse.json(experience);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to update experience" }, { status: 500 });
+    console.error("PUT /api/experiences/[id]:", error);
+    const isDev = process.env.NODE_ENV === "development";
+    return NextResponse.json(
+      {
+        error: "Failed to update experience",
+        ...(isDev && { details: prismaErrorMessage(error) }),
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -36,6 +64,14 @@ export async function DELETE(
     });
     return NextResponse.json({ message: "Experience deleted successfully" });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to delete experience" }, { status: 500 });
+    console.error("DELETE /api/experiences/[id]:", error);
+    const isDev = process.env.NODE_ENV === "development";
+    return NextResponse.json(
+      {
+        error: "Failed to delete experience",
+        ...(isDev && { details: prismaErrorMessage(error) }),
+      },
+      { status: 500 }
+    );
   }
 }

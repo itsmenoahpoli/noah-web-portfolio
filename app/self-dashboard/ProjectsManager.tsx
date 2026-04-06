@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z } from "zod";
+import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { parseApiError } from "@/lib/api-error";
 import ImageUpload from "./ImageUpload";
 
 interface Project {
@@ -37,6 +39,11 @@ export default function ProjectsManager() {
     queryKey: ["projects"],
     queryFn: async () => {
       const res = await fetch("/api/projects");
+      if (!res.ok) {
+        const msg = await parseApiError(res, "Failed to fetch projects");
+        toast.error(msg);
+        throw new Error(msg);
+      }
       return res.json();
     },
   });
@@ -50,23 +57,37 @@ export default function ProjectsManager() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      if (!res.ok) throw new Error("Failed to save project");
+      if (!res.ok) {
+        const msg = await parseApiError(res, "Failed to save project");
+        throw new Error(msg);
+      }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      toast.success(variables.id ? "Project updated" : "Project created");
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       setIsEditing(false);
       setEditingProject(null);
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to save project");
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete project");
+      if (!res.ok) {
+        const msg = await parseApiError(res, "Failed to delete project");
+        throw new Error(msg);
+      }
     },
     onSuccess: () => {
+      toast.success("Project deleted");
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to delete project");
     },
   });
 

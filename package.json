@@ -8,7 +8,8 @@
     "build": "next build",
     "postinstall": "prisma generate",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:test-write": "node scripts/test-db-write.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",
@@ -28,6 +29,7 @@
     "react-dom": "19.2.3",
     "react-icons": "^5.5.0",
     "shadcn": "^4.1.2",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "tw-animate-css": "^1.4.0",
     "zod": "^4.3.5",
