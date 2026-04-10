@@ -3,7 +3,7 @@
 import { HiArrowRight } from "react-icons/hi2";
 import Projects from "./Projects";
 import HeroExperience from "./HeroExperience";
-import { SlideUpText } from "@/components/slide-up-text";
+import { GradientWaveText } from "@/components/gradient-wave-text";
 import { RandomizedText } from "@/components/randomized-text";
 import {
   SiReact,
@@ -39,17 +39,10 @@ export default function Hero() {
           <p className="text-base sm:text-lg text-gray-700 dark:text-white">
             Hey, I’m
           </p>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-tight text-gray-900 dark:text-white">
-            <SlideUpText
-              inView
-              once
-              split="words"
-              delay={0.1}
-              stagger={0.08}
-              className="text-inherit text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-tight"
-            >
+          <h1 className="leading-tight text-gray-900! dark:text-white!">
+            <GradientWaveText className="text-3xl md:text-5xl font-medium tracking-[-.03em]">
               {HERO_NAME}
-            </SlideUpText>
+            </GradientWaveText>
           </h1>
         </div>
 

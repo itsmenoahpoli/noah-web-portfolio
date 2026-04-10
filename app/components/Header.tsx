@@ -98,6 +98,7 @@ export default function Header() {
                 onClick={handleToggleTheme}
                 className="p-2 text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                 aria-label="Toggle theme"
+                hidden
               >
                 {mounted &&
                   (theme === "dark" ? (
@@ -146,6 +147,7 @@ export default function Header() {
               onClick={handleToggleTheme}
               className="p-3 text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
               aria-label="Toggle theme"
+              hidden
             >
               {mounted &&
                 (theme === "dark" ? (

@@ -11,7 +11,7 @@ import { themeScript } from "@/utils/theme-script";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,7 +28,14 @@ export const metadata: Metadata = {
   },
   description:
     "Senior Software Engineer and Tech Lead with 7+ years of experience building scalable web and mobile applications. Expert in React, Vue, Node.js, NestJS, Laravel, and cloud-based architectures.",
-  keywords: ["Software Engineer", "Tech Lead", "Full Stack Developer", "React", "Node.js", "Portfolio"],
+  keywords: [
+    "Software Engineer",
+    "Tech Lead",
+    "Full Stack Developer",
+    "React",
+    "Node.js",
+    "Portfolio",
+  ],
   authors: [{ name: "Patrick Niño Noah W Policarpio" }],
   creator: "Patrick Niño Noah W Policarpio",
   openGraph: {
@@ -54,7 +61,7 @@ export const metadata: Metadata = {
     description:
       "Senior Software Engineer and Tech Lead with 7+ years of experience building scalable web and mobile applications.",
     images: ["/noah-self.jpg"],
-    creator: "@yourtwitterhandle", // User should update this
+    creator: "@itsmenoahpoli", // User should update this
   },
   robots: {
     index: true,
@@ -68,7 +75,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn("font-sans", geist.variable)}
+    >
       <body className={`${inter.variable} font-sans antialiased`}>
         <script
           dangerouslySetInnerHTML={{
