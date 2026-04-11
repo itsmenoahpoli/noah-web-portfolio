@@ -6,6 +6,7 @@ import ProgressBar from "./components/ProgressBar";
 import Footer from "./components/Footer";
 import Cursor from "./components/AnimatedCursor";
 import QueryProvider from "./components/QueryProvider";
+import LenisProvider from "./components/LenisProvider";
 import { AppToaster } from "./components/AppToaster";
 import { themeScript } from "@/utils/theme-script";
 import { ThemeProvider } from "../contexts/ThemeContext";
@@ -87,6 +88,7 @@ export default function RootLayout({
           }}
         />
         <ThemeProvider>
+          <LenisProvider />
           <QueryProvider>
             <AppToaster />
             <Cursor />
