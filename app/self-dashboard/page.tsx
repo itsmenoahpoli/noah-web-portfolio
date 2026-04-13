@@ -6,6 +6,7 @@ import {
   HiOutlineRocketLaunch,
   HiOutlineBookOpen,
   HiOutlineBriefcase,
+  HiOutlineEnvelope,
   HiOutlineArrowLeftOnRectangle,
   HiOutlineSquares2X2,
   HiChevronRight,
@@ -17,15 +18,26 @@ import ProjectsManager from "./ProjectsManager";
 import BlogsManager from "./BlogsManager";
 import ExperiencesManager from "./ExperiencesManager";
 import MetricsManager from "./MetricsManager";
+import ContactSubmissionsManager from "./ContactSubmissionsManager";
 import DashboardLoading from "./DashboardLoading";
 
-type DashboardTab = "metrics" | "projects" | "blogs" | "experiences";
+type DashboardTab =
+  | "metrics"
+  | "projects"
+  | "blogs"
+  | "experiences"
+  | "contact-submissions";
 
 const navItems = [
   { id: "metrics", label: "Metrics", icon: HiOutlineChartBar },
   { id: "projects", label: "Projects", icon: HiOutlineRocketLaunch },
   { id: "blogs", label: "Blogs", icon: HiOutlineBookOpen },
   { id: "experiences", label: "Experiences", icon: HiOutlineBriefcase },
+  {
+    id: "contact-submissions",
+    label: "Contact Submissions",
+    icon: HiOutlineEnvelope,
+  },
 ] as const;
 
 interface SidebarContentProps {
@@ -125,10 +137,8 @@ function DashboardPageContent() {
       : `Add, edit or remove your portfolio ${activeTab}`;
 
   return (
-    <div
-      className="min-h-screen bg-transparent font-sans text-[var(--foreground)] lg:[zoom:90%]"
-    >
-      <div className="flex min-h-screen">
+    <div className="flex h-full min-h-full flex-col bg-transparent font-sans text-foreground">
+      <div className="flex min-h-full flex-1">
         <div className="fixed inset-x-0 top-0 z-40 border-b border-gray-200 bg-white/80 backdrop-blur-xl dark:border-gray-800 dark:bg-black/40 md:hidden">
           <div className="flex items-center justify-between px-4 py-4">
             <div className="flex items-center gap-3">
@@ -190,8 +200,8 @@ function DashboardPageContent() {
           />
         </aside>
 
-        <main className="min-h-screen flex-1 bg-gray-50/30 pt-20 dark:bg-black/40 md:ml-64 md:pt-0">
-          <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
+        <main className="flex min-h-[calc(100vh-5rem)] flex-1 flex-col bg-gray-50/30 pt-20 dark:bg-black/40 md:ml-64 md:min-h-screen md:pt-0">
+          <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
             <header className="mb-8 lg:mb-12">
               <nav className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
                 <span className="cursor-default">Dashboard</span>
@@ -206,11 +216,12 @@ function DashboardPageContent() {
               </p>
             </header>
 
-            <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm backdrop-blur-sm dark:border-gray-800 dark:bg-white/5 sm:p-6 lg:p-8">
+            <div className="flex min-h-[calc(100vh-18rem)] flex-1 flex-col rounded-3xl border border-gray-200 bg-white p-4 shadow-sm backdrop-blur-sm dark:border-gray-800 dark:bg-white/5 sm:min-h-[calc(100vh-19rem)] sm:p-6 lg:min-h-[calc(100vh-20rem)] lg:p-8">
               {activeTab === "metrics" && <MetricsManager />}
               {activeTab === "projects" && <ProjectsManager />}
               {activeTab === "blogs" && <BlogsManager />}
               {activeTab === "experiences" && <ExperiencesManager />}
+              {activeTab === "contact-submissions" && <ContactSubmissionsManager />}
             </div>
           </div>
         </main>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence } from "framer-motion";
+import { HiOutlineFolderOpen } from "react-icons/hi2";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z } from "zod";
@@ -12,6 +13,7 @@ import { parseApiError } from "@/lib/api-error";
 import FormModal from "./FormModal";
 import ProjectImagesUpload from "./ProjectImagesUpload";
 import DashboardLoading from "./DashboardLoading";
+import EmptyState from "./EmptyState";
 
 interface Project {
   id: string;
@@ -265,54 +267,62 @@ export default function ProjectsManager() {
         )}
       </AnimatePresence>
 
-      <div className="grid grid-cols-1 gap-3">
-        {projects.map((project) => (
-          <div key={project.id} className="group flex justify-between items-center bg-white dark:bg-white/5 p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-all">
-            <div className="flex items-center space-x-4">
-              {project.image ? (
-                <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-gray-100 dark:border-gray-800">
-                  <Image
-                    src={project.image}
-                    alt=""
-                    width={48}
-                    height={48}
-                    className="h-full w-full object-cover"
-                  />
+      {projects.length === 0 ? (
+        <EmptyState
+          icon={HiOutlineFolderOpen}
+          title="No projects yet"
+          description="Add your first project to start showcasing your portfolio work."
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-3">
+          {projects.map((project) => (
+            <div key={project.id} className="group flex justify-between items-center bg-white dark:bg-white/5 p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-all">
+              <div className="flex items-center space-x-4">
+                {project.image ? (
+                  <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-gray-100 dark:border-gray-800">
+                    <Image
+                      src={project.image}
+                      alt=""
+                      width={48}
+                      height={48}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center shrink-0 border border-gray-100 dark:border-gray-800 text-gray-400 text-xs">
+                    No img
+                  </div>
+                )}
+                <div>
+                  <h3 className="font-medium text-foreground">{project.title}</h3>
+                  <p className="text-gray-400 text-xs mt-0.5">{project.technologies}</p>
                 </div>
-              ) : (
-                <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center shrink-0 border border-gray-100 dark:border-gray-800 text-gray-400 text-xs">
-                  No img
-                </div>
-              )}
-              <div>
-                <h3 className="font-medium text-[var(--foreground)]">{project.title}</h3>
-                <p className="text-gray-400 text-xs mt-0.5">{project.technologies}</p>
+              </div>
+              <div className="flex items-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => {
+                    setEditingProject(project);
+                    setIsEditing(true);
+                  }}
+                  className="text-sm font-medium text-gray-500 hover:text-black dark:hover:text-white transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm("Are you sure?")) {
+                      deleteMutation.mutate(project.id);
+                    }
+                  }}
+                  className="text-sm font-medium text-red-400 hover:text-red-500 transition-colors"
+                >
+                  Delete
+                </button>
               </div>
             </div>
-            <div className="flex items-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                onClick={() => {
-                  setEditingProject(project);
-                  setIsEditing(true);
-                }}
-                className="text-sm font-medium text-gray-500 hover:text-black dark:hover:text-white transition-colors"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => {
-                  if (confirm("Are you sure?")) {
-                    deleteMutation.mutate(project.id);
-                  }
-                }}
-                className="text-sm font-medium text-red-400 hover:text-red-500 transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

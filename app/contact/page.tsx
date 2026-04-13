@@ -1,37 +1,63 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { HiArrowLeft } from "react-icons/hi2";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import Header from "@/components/Header";
+import {
+  contactSubmissionSchema,
+  type ContactSubmissionInput,
+} from "@/lib/validations/contact";
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    message: "",
-    country: "Philippines",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactSubmissionInput>({
+    resolver: zodResolver(contactSubmissionSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      message: "",
+      country: "Philippines",
+    },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
+  const onSubmit = async (data: ContactSubmissionInput) => {
+    try {
+      const response = await fetch("/api/contact-submissions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+      const result = (await response.json().catch(() => null)) as
+        | { error?: string }
+        | null;
+
+      if (!response.ok) {
+        throw new Error(result?.error || "Failed to send message");
+      }
+
+      toast.success("Message sent successfully.");
+      reset();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to send message",
+      );
+    }
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-[var(--foreground)] font-sans">
+    <div className="min-h-screen bg-transparent text-foreground font-sans">
       <Header />
       <main>
         <section className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-32 pb-20">
@@ -43,7 +69,7 @@ export default function ContactPage() {
             Back to Home
           </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+          <div className="mx-auto max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -61,7 +87,10 @@ export default function ContactPage() {
                 shortly.
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-6 rounded-3xl border border-white/50 bg-white/55 p-6 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/55 sm:p-8"
+              >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label
@@ -73,11 +102,14 @@ export default function ContactPage() {
                     <input
                       type="text"
                       id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-400"
+                      {...register("firstName")}
+                      className="w-full rounded-xl border border-white/60 bg-white/80 px-4 py-2.5 text-gray-900 shadow-sm backdrop-blur-md transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900/80 dark:border-white/10 dark:bg-slate-900/80 dark:text-white dark:focus:ring-slate-500"
                     />
+                    {errors.firstName && (
+                      <p className="mt-2 text-sm text-rose-500 dark:text-rose-400">
+                        {errors.firstName.message}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -89,11 +121,14 @@ export default function ContactPage() {
                     <input
                       type="text"
                       id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-400"
+                      {...register("lastName")}
+                      className="w-full rounded-xl border border-white/60 bg-white/80 px-4 py-2.5 text-gray-900 shadow-sm backdrop-blur-md transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900/80 dark:border-white/10 dark:bg-slate-900/80 dark:text-white dark:focus:ring-slate-500"
                     />
+                    {errors.lastName && (
+                      <p className="mt-2 text-sm text-rose-500 dark:text-rose-400">
+                        {errors.lastName.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -107,11 +142,14 @@ export default function ContactPage() {
                   <input
                     type="email"
                     id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-400"
+                    {...register("email")}
+                    className="w-full rounded-xl border border-white/60 bg-white/80 px-4 py-2.5 text-gray-900 shadow-sm backdrop-blur-md transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900/80 dark:border-white/10 dark:bg-slate-900/80 dark:text-white dark:focus:ring-slate-500"
                   />
+                  {errors.email && (
+                    <p className="mt-2 text-sm text-rose-500 dark:text-rose-400">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -123,12 +161,15 @@ export default function ContactPage() {
                   </label>
                   <textarea
                     id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
+                    {...register("message")}
                     rows={5}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-400 resize-none"
+                    className="w-full resize-none rounded-xl border border-white/60 bg-white/80 px-4 py-2.5 text-gray-900 shadow-sm backdrop-blur-md transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900/80 dark:border-white/10 dark:bg-slate-900/80 dark:text-white dark:focus:ring-slate-500"
                   />
+                  {errors.message && (
+                    <p className="mt-2 text-sm text-rose-500 dark:text-rose-400">
+                      {errors.message.message}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -141,10 +182,8 @@ export default function ContactPage() {
                   <div className="relative">
                     <select
                       id="country"
-                      name="country"
-                      value={formData.country}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-400 appearance-none pr-10"
+                      {...register("country")}
+                      className="w-full appearance-none rounded-xl border border-white/60 bg-white/80 px-4 py-2.5 pr-10 text-gray-900 shadow-sm backdrop-blur-md transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900/80 dark:border-white/10 dark:bg-slate-900/80 dark:text-white dark:focus:ring-slate-500"
                     >
                       <option value="Philippines">Philippines</option>
                     </select>
@@ -167,36 +206,23 @@ export default function ContactPage() {
                       </svg>
                     </div>
                   </div>
+                  {errors.country && (
+                    <p className="mt-2 text-sm text-rose-500 dark:text-rose-400">
+                      {errors.country.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* add recaptcha here to block spams */}
 
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-slate-900 dark:bg-green-400 hover:bg-slate-800 dark:hover:bg-green-500 text-white dark:text-gray-900 font-medium rounded-lg transition-colors"
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl border border-slate-950/5 bg-slate-900 px-6 py-3 font-medium text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70 dark:border-white/10 dark:bg-slate-100/10 dark:text-white dark:hover:bg-slate-100/18"
                 >
-                  Send message
+                  {isSubmitting ? "Sending..." : "Send message"}
                 </button>
               </form>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="w-full h-[600px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700"
-            >
-              <iframe
-                src="https://maps.google.com/maps?q=Makati+City,+Philippines&t=&z=11&ie=UTF8&iwloc=&output=embed"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="w-full h-full"
-                title="Makati City, Philippines"
-              />
             </motion.div>
           </div>
         </section>

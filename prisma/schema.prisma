@@ -43,6 +43,8 @@ model Blog {
 model Experience {
   id          String   @id @default(uuid())
   company     String
+  companyLogo String?
+  categories  String[] @default([])
   position    String
   location    String
   startDate   String
@@ -52,4 +54,17 @@ model Experience {
   updatedAt   DateTime @updatedAt
 
   @@index([startDate])
+}
+
+model ContactSubmission {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String
+  message   String
+  country   String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([email])
 }

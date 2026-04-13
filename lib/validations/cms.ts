@@ -51,6 +51,19 @@ const projectImagesField = z.preprocess((val: unknown) => {
   return [];
 }, z.array(z.string().trim().min(1)).min(1, "At least one image is required"));
 
+const experienceCategoriesField = z.preprocess((val: unknown) => {
+  if (Array.isArray(val)) {
+    return val.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    return trimmed ? [trimmed] : [];
+  }
+
+  return [];
+}, z.array(z.enum(["Full-time", "Part-time (Consultant)"])));
+
 export const projectBodySchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
   description: z.string().trim().min(1, "Description is required"),
@@ -73,6 +86,8 @@ export const blogBodySchema = z.object({
 
 export const experienceBodySchema = z.object({
   company: z.string().trim().min(1, "Company is required"),
+  companyLogo: optionalImage,
+  categories: experienceCategoriesField,
   position: z.string().trim().min(1, "Position is required"),
   location: z.string().trim().min(1, "Location is required"),
   startDate: z.string().trim().min(1, "Start date is required"),

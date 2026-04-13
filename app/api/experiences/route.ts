@@ -4,12 +4,19 @@ import { prisma } from "@/lib/prisma";
 import { prismaErrorMessage } from "@/lib/prisma-error";
 import { experienceBodySchema } from "@/lib/validations/cms";
 
+function normalizeExperience<T extends { endDate: string | null }>(experience: T): T {
+  return {
+    ...experience,
+    endDate: experience.endDate?.trim() ? experience.endDate : null,
+  };
+}
+
 export async function GET() {
   try {
     const experiences = await prisma.experience.findMany({
       orderBy: { startDate: "desc" },
     });
-    return NextResponse.json(experiences);
+    return NextResponse.json(experiences.map(normalizeExperience));
   } catch (error) {
     console.error("GET /api/experiences:", error);
     return NextResponse.json(
@@ -48,6 +55,8 @@ export async function POST(request: Request) {
     const experience = await prisma.experience.create({
       data: {
         company: parsed.data.company,
+        companyLogo: parsed.data.companyLogo,
+        categories: parsed.data.categories,
         position: parsed.data.position,
         location: parsed.data.location,
         startDate: parsed.data.startDate,
@@ -55,7 +64,7 @@ export async function POST(request: Request) {
         description: parsed.data.description,
       },
     });
-    return NextResponse.json(experience);
+    return NextResponse.json(normalizeExperience(experience));
   } catch (error) {
     console.error("POST /api/experiences:", error);
     const isDev = process.env.NODE_ENV === "development";

@@ -105,7 +105,7 @@ export default function RootLayout({
               />
             </div>
 
-            <div className="relative">
+            <div className="relative flex min-h-screen flex-col">
               <LenisProvider />
               <QueryProvider>
                 <AppToaster />
@@ -113,7 +113,7 @@ export default function RootLayout({
                 <Suspense fallback={null}>
                   <ProgressBar />
                 </Suspense>
-                {children}
+                <div className="flex-1">{children}</div>
                 <Footer />
               </QueryProvider>
             </div>

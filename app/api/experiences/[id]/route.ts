@@ -4,6 +4,13 @@ import { prisma } from "@/lib/prisma";
 import { prismaErrorMessage } from "@/lib/prisma-error";
 import { experienceBodySchema } from "@/lib/validations/cms";
 
+function normalizeExperience<T extends { endDate: string | null }>(experience: T): T {
+  return {
+    ...experience,
+    endDate: experience.endDate?.trim() ? experience.endDate : null,
+  };
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -32,6 +39,8 @@ export async function PUT(
       where: { id },
       data: {
         company: parsed.data.company,
+        companyLogo: parsed.data.companyLogo,
+        categories: parsed.data.categories,
         position: parsed.data.position,
         location: parsed.data.location,
         startDate: parsed.data.startDate,
@@ -39,7 +48,7 @@ export async function PUT(
         description: parsed.data.description,
       },
     });
-    return NextResponse.json(experience);
+    return NextResponse.json(normalizeExperience(experience));
   } catch (error) {
     console.error("PUT /api/experiences/[id]:", error);
     const isDev = process.env.NODE_ENV === "development";

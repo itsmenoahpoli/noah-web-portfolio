@@ -6,6 +6,7 @@ import {
   HiOutlineRocketLaunch,
   HiOutlineBookOpen,
   HiOutlineBriefcase,
+  HiOutlineEnvelope,
   HiOutlineSquares2X2,
 } from "react-icons/hi2";
 import { parseApiError } from "@/lib/api-error";
@@ -23,6 +24,10 @@ interface Blog {
 }
 
 interface Experience {
+  id: string;
+}
+
+interface ContactSubmission {
   id: string;
 }
 
@@ -92,10 +97,23 @@ export default function MetricsManager() {
           return res.json() as Promise<Experience[]>;
         },
       },
+      {
+        queryKey: ["contact-submissions"],
+        queryFn: async () => {
+          const res = await fetch("/api/contact-submissions");
+          if (!res.ok) {
+            throw new Error(
+              await parseApiError(res, "Failed to fetch contact submissions"),
+            );
+          }
+          return res.json() as Promise<ContactSubmission[]>;
+        },
+      },
     ],
   });
 
-  const [projectsQuery, blogsQuery, experiencesQuery] = results;
+  const [projectsQuery, blogsQuery, experiencesQuery, contactSubmissionsQuery] =
+    results;
   const isLoading = results.some((result) => result.isLoading);
   const error = results.find((result) => result.error)?.error;
 
@@ -103,6 +121,7 @@ export default function MetricsManager() {
     const projects = projectsQuery.data ?? [];
     const blogs = blogsQuery.data ?? [];
     const experiences = experiencesQuery.data ?? [];
+    const contactSubmissions = contactSubmissionsQuery.data ?? [];
 
     const totalProjectImages = projects.reduce((total, project) => {
       const imageCount = project.images?.length ?? (project.image ? 1 : 0);
@@ -115,11 +134,21 @@ export default function MetricsManager() {
       projects: projects.length,
       blogs: blogs.length,
       experiences: experiences.length,
+      contactSubmissions: contactSubmissions.length,
       totalProjectImages,
       totalBlogTags,
-      totalEntries: projects.length + blogs.length + experiences.length,
+      totalEntries:
+        projects.length +
+        blogs.length +
+        experiences.length +
+        contactSubmissions.length,
     };
-  }, [projectsQuery.data, blogsQuery.data, experiencesQuery.data]);
+  }, [
+    projectsQuery.data,
+    blogsQuery.data,
+    experiencesQuery.data,
+    contactSubmissionsQuery.data,
+  ]);
 
   if (isLoading) {
     return <DashboardLoading />;
@@ -142,7 +171,7 @@ export default function MetricsManager() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <StatCard
           label="Projects"
           value={stats.projects}
@@ -163,6 +192,13 @@ export default function MetricsManager() {
           helper="Career timeline entries"
           icon={HiOutlineBriefcase}
           iconClassName="bg-emerald-400/10 text-emerald-300"
+        />
+        <StatCard
+          label="Contact Submissions"
+          value={stats.contactSubmissions}
+          helper="Incoming contact form leads"
+          icon={HiOutlineEnvelope}
+          iconClassName="bg-cyan-400/10 text-cyan-300"
         />
         <StatCard
           label="Total Entries"
