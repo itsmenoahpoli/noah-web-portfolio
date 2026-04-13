@@ -43,7 +43,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
+    <div className="min-h-screen bg-transparent text-[var(--foreground)] font-sans">
       <Header />
       <div className="flex items-center justify-center min-h-screen px-6">
         <div className="max-w-md w-full">

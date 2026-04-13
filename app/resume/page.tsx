@@ -7,7 +7,7 @@ import Header from "../components/Header";
 
 export default function ResumePage() {
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
+    <div className="min-h-screen bg-transparent text-[var(--foreground)] font-sans">
       <Header />
       <main>
         <section className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-32 pb-20">

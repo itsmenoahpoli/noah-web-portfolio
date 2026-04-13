@@ -1,15 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { HiSun, HiMoon } from "react-icons/hi2";
 import Hamburger from "hamburger-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useTheme } from "../../contexts/ThemeContext";
 
 export default function Header() {
   const pathname = usePathname();
-  const { theme, toggle: handleToggleTheme, mounted } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -65,12 +62,12 @@ export default function Header() {
       >
         <nav className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4">
           <div className="flex items-center justify-between">
-            <a
+            <Link
               href="/"
               className="text-lg font-medium text-black dark:text-white hover:opacity-70 transition-opacity"
             >
               PNNWP.
-            </a>
+            </Link>
 
             <div className="flex items-center gap-8">
               <div className="hidden md:flex items-center gap-8">
@@ -94,26 +91,12 @@ export default function Header() {
                 })}
               </div>
 
-              <button
-                onClick={handleToggleTheme}
-                className="p-2 text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                aria-label="Toggle theme"
-                hidden
-              >
-                {mounted &&
-                  (theme === "dark" ? (
-                    <HiSun className="w-5 h-5" />
-                  ) : (
-                    <HiMoon className="w-5 h-5" />
-                  ))}
-              </button>
-
               <div className="md:hidden">
                 <Hamburger
                   toggled={isMenuOpen}
                   toggle={setIsMenuOpen}
                   size={24}
-                  color={theme === "dark" ? "#ffffff" : "#000000"}
+                  color="#ffffff"
                 />
               </div>
             </div>
@@ -143,19 +126,6 @@ export default function Header() {
                 </Link>
               );
             })}
-            <button
-              onClick={handleToggleTheme}
-              className="p-3 text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-              aria-label="Toggle theme"
-              hidden
-            >
-              {mounted &&
-                (theme === "dark" ? (
-                  <HiSun className="w-6 h-6" />
-                ) : (
-                  <HiMoon className="w-6 h-6" />
-                ))}
-            </button>
           </div>
         </div>
       )}

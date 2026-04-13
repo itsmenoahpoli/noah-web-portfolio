@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { FaGithub } from "react-icons/fa";
-import { HiLink, HiClock } from "react-icons/hi2";
+import { HiLink } from "react-icons/hi2";
 import Link from "next/link";
 import Image from "next/image";
 import { getTagColor } from "@/utils/projects";
@@ -13,6 +13,7 @@ interface Project {
   title: string;
   description: string;
   image: string;
+  images?: string[];
   technologies: string;
   githubUrl: string;
   liveUrl: string;

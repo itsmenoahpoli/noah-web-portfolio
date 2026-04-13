@@ -27,10 +27,34 @@ const optionalPublishedAt = z.preprocess((val: unknown) => {
   return Number.isNaN(d.getTime()) ? undefined : d;
 }, z.date().optional());
 
+const projectImagesField = z.preprocess((val: unknown) => {
+  if (Array.isArray(val)) {
+    return val.map((image) => String(image).trim()).filter(Boolean);
+  }
+
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    if (!trimmed) return [];
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((image) => String(image).trim())
+          .filter(Boolean);
+      }
+    } catch {
+      return [trimmed];
+    }
+  }
+
+  return [];
+}, z.array(z.string().trim().min(1)).min(1, "At least one image is required"));
+
 export const projectBodySchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
   description: z.string().trim().min(1, "Description is required"),
-  image: z.string().trim().min(1, "Image is required"),
+  images: projectImagesField,
   technologies: z.string().trim().min(1, "Technologies are required"),
   githubUrl: z.string().trim().min(1, "GitHub URL is required"),
   liveUrl: z.string().trim().min(1, "Live URL is required"),

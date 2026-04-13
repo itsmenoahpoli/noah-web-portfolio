@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import { AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z } from "zod";
@@ -8,6 +10,8 @@ import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { parseApiError } from "@/lib/api-error";
 import ImageUpload from "./ImageUpload";
+import FormModal from "./FormModal";
+import DashboardLoading from "./DashboardLoading";
 
 interface Blog {
   id: string;
@@ -21,6 +25,8 @@ interface Blog {
   publishedAt: string;
 }
 
+const BLOG_AUTHOR = "Patrick Policarpio";
+
 const blogSchema = z.object({
   title: z.string().min(1, "Title is required"),
   slug: z.string().min(1, "Slug is required"),
@@ -31,10 +37,17 @@ const blogSchema = z.object({
   image: z.string().min(1, "Image is required").or(z.literal("")).optional(),
 });
 
+type BlogFormValues = z.infer<typeof blogSchema>;
+
 export default function BlogsManager() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
   const queryClient = useQueryClient();
+
+  const closeModal = () => {
+    setIsEditing(false);
+    setEditingBlog(null);
+  };
 
   const { data: blogs = [], isLoading } = useQuery<Blog[]>({
     queryKey: ["blogs"],
@@ -50,7 +63,7 @@ export default function BlogsManager() {
   });
 
   const mutation = useMutation({
-    mutationFn: async (values: any) => {
+    mutationFn: async (values: BlogFormValues & { id?: string }) => {
       const method = values.id ? "PUT" : "POST";
       const url = values.id ? `/api/blogs/${values.id}` : "/api/blogs";
 
@@ -76,8 +89,7 @@ export default function BlogsManager() {
     onSuccess: (_, variables) => {
       toast.success(variables.id ? "Blog updated" : "Blog published");
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
-      setIsEditing(false);
-      setEditingBlog(null);
+      closeModal();
     },
     onError: (err) => {
       toast.error(err instanceof Error ? err.message : "Failed to save blog");
@@ -101,7 +113,7 @@ export default function BlogsManager() {
     },
   });
 
-  if (isLoading) return <div className="text-gray-400">Loading...</div>;
+  if (isLoading) return <DashboardLoading />;
 
   return (
     <div className="space-y-8">
@@ -118,179 +130,185 @@ export default function BlogsManager() {
         </button>
       </div>
 
-      {isEditing && (
-        <Formik
-          initialValues={{
-            title: editingBlog?.title || "",
-            slug: editingBlog?.slug || "",
-            author: editingBlog?.author || "",
-            description: editingBlog?.description || "",
-            content: editingBlog?.content || "",
-            tags: Array.isArray(editingBlog?.tags)
-              ? editingBlog?.tags.join(", ")
-              : "",
-            image: editingBlog?.image || "",
-          }}
-          validationSchema={toFormikValidationSchema(blogSchema)}
-          onSubmit={(values) =>
-            mutation.mutate({ ...values, id: editingBlog?.id })
-          }
-        >
-          {({ isSubmitting, setFieldValue, values, handleChange }) => {
-            const handleTitleChange = (
-              e: React.ChangeEvent<HTMLInputElement>
-            ) => {
-              handleChange(e);
-              const generatedSlug = e.target.value
-                .toLowerCase()
-                .trim()
-                .replace(/[^\w\s-]/g, "")
-                .replace(/[\s_-]+/g, "-")
-                .replace(/^-+|-+$/g, "");
-              setFieldValue("slug", generatedSlug);
-            };
+      <AnimatePresence>
+        {isEditing && (
+          <FormModal
+            title={editingBlog ? "Edit Blog" : "Create Blog"}
+            description="Write, edit, and publish blog content in a focused modal."
+            onClose={closeModal}
+          >
+            <Formik
+              initialValues={{
+                title: editingBlog?.title || "",
+                slug: editingBlog?.slug || "",
+                author: BLOG_AUTHOR,
+                description: editingBlog?.description || "",
+                content: editingBlog?.content || "",
+                tags: Array.isArray(editingBlog?.tags)
+                  ? editingBlog?.tags.join(", ")
+                  : "",
+                image: editingBlog?.image || "",
+              }}
+              enableReinitialize
+              validationSchema={toFormikValidationSchema(blogSchema)}
+              onSubmit={(values) =>
+                mutation.mutate({ ...values, id: editingBlog?.id })
+              }
+            >
+              {({ isSubmitting, setFieldValue, values, handleChange }) => {
+                const handleTitleChange = (
+                  e: React.ChangeEvent<HTMLInputElement>
+                ) => {
+                  handleChange(e);
+                  const generatedSlug = e.target.value
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[^\w\s-]/g, "")
+                    .replace(/[\s_-]+/g, "-")
+                    .replace(/^-+|-+$/g, "");
+                  setFieldValue("slug", generatedSlug);
+                };
 
-            return (
-              <Form className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 dark:bg-black/40 p-6 rounded-xl border border-gray-100 dark:border-gray-800">
-                <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Title
-                  </label>
-                  <Field
-                    name="title"
-                    placeholder="Blog Title"
-                    onChange={handleTitleChange}
-                    className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                  />
-                  <ErrorMessage
-                    name="title"
-                    component="div"
-                    className="text-red-500 text-[10px] font-medium"
-                  />
-                </div>
+                return (
+                  <Form className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Title
+                    </label>
+                    <Field
+                      name="title"
+                      placeholder="Blog Title"
+                      onChange={handleTitleChange}
+                      className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                    />
+                    <ErrorMessage
+                      name="title"
+                      component="div"
+                      className="text-[10px] font-medium text-red-500"
+                    />
+                  </div>
 
-                <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Slug (Auto-generated)
-                  </label>
-                  <Field
-                    name="slug"
-                    placeholder="blog-title-url"
-                    className="bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm text-gray-500 cursor-not-allowed focus:outline-none"
-                    readOnly
-                  />
-                  <ErrorMessage
-                    name="slug"
-                    component="div"
-                    className="text-red-500 text-[10px] font-medium"
-                  />
-                </div>
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Slug (Auto-generated)
+                    </label>
+                    <Field
+                      name="slug"
+                      placeholder="blog-title-url"
+                      className="cursor-not-allowed rounded-lg border border-white/10 bg-white/5 p-3 text-sm text-gray-500 focus:outline-none"
+                      readOnly
+                    />
+                    <ErrorMessage
+                      name="slug"
+                      component="div"
+                      className="text-[10px] font-medium text-red-500"
+                    />
+                  </div>
 
-                <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Author
-                  </label>
-                  <Field
-                    name="author"
-                    placeholder="Author Name"
-                    className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                  />
-                  <ErrorMessage
-                    name="author"
-                    component="div"
-                    className="text-red-500 text-[10px] font-medium"
-                  />
-                </div>
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Author
+                    </label>
+                    <Field
+                      name="author"
+                      className="cursor-not-allowed rounded-lg border border-white/10 bg-white/5 p-3 text-sm text-gray-400 focus:outline-none"
+                      readOnly
+                    />
+                    <ErrorMessage
+                      name="author"
+                      component="div"
+                      className="text-[10px] font-medium text-red-500"
+                    />
+                  </div>
 
-                <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Tags
-                  </label>
-                  <Field
-                    name="tags"
-                    placeholder="Tech, Life, Coding"
-                    className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                  />
-                  <ErrorMessage
-                    name="tags"
-                    component="div"
-                    className="text-red-500 text-[10px] font-medium"
-                  />
-                </div>
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Tags
+                    </label>
+                    <Field
+                      name="tags"
+                      placeholder="Tech, Life, Coding"
+                      className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                    />
+                    <ErrorMessage
+                      name="tags"
+                      component="div"
+                      className="text-[10px] font-medium text-red-500"
+                    />
+                  </div>
 
-                <div className="flex flex-col space-y-2 md:col-span-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Feature Image
-                  </label>
-                  <ImageUpload
-                    currentImage={values.image}
-                    onUpload={(path) => setFieldValue("image", path)}
-                  />
-                  <ErrorMessage
-                    name="image"
-                    component="div"
-                    className="text-red-500 text-[10px] font-medium"
-                  />
-                </div>
+                  <div className="flex flex-col space-y-2 md:col-span-2">
+                    <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Feature Image
+                    </label>
+                    <ImageUpload
+                      currentImage={values.image}
+                      onUpload={(path) => setFieldValue("image", path)}
+                    />
+                    <ErrorMessage
+                      name="image"
+                      component="div"
+                      className="text-[10px] font-medium text-red-500"
+                    />
+                  </div>
 
-                <div className="flex flex-col space-y-2 md:col-span-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Description
-                  </label>
-                  <Field
-                    as="textarea"
-                    name="description"
-                    placeholder="Short summary of the blog..."
-                    className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all h-20 resize-none"
-                  />
-                  <ErrorMessage
-                    name="description"
-                    component="div"
-                    className="text-red-500 text-[10px] font-medium"
-                  />
-                </div>
+                  <div className="flex flex-col space-y-2 md:col-span-2">
+                    <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Description
+                    </label>
+                    <Field
+                      as="textarea"
+                      name="description"
+                      placeholder="Short summary of the blog..."
+                      className="h-20 resize-none rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                    />
+                    <ErrorMessage
+                      name="description"
+                      component="div"
+                      className="text-[10px] font-medium text-red-500"
+                    />
+                  </div>
 
-                <div className="flex flex-col space-y-2 md:col-span-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Content
-                  </label>
-                  <Field
-                    as="textarea"
-                    name="content"
-                    placeholder="Write your blog content here..."
-                    className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all h-64 resize-none"
-                  />
-                  <ErrorMessage
-                    name="content"
-                    component="div"
-                    className="text-red-500 text-[10px] font-medium"
-                  />
-                </div>
+                  <div className="flex flex-col space-y-2 md:col-span-2">
+                    <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Content
+                    </label>
+                    <Field
+                      as="textarea"
+                      name="content"
+                      placeholder="Write your blog content here..."
+                      className="h-64 resize-none rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                    />
+                    <ErrorMessage
+                      name="content"
+                      component="div"
+                      className="text-[10px] font-medium text-red-500"
+                    />
+                  </div>
 
-                <div className="flex space-x-3 md:col-span-2 pt-2">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="bg-black dark:bg-white text-white dark:text-black px-6 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
-                  >
-                    {editingBlog ? "Update Blog" : "Publish Blog"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsEditing(false);
-                      setEditingBlog(null);
-                    }}
-                    className="bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/10 transition-all"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </Form>
-            );
-          }}
-        </Formik>
-      )}
+                  <div className="flex space-x-3 pt-2 md:col-span-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="rounded-lg bg-white px-6 py-2.5 text-sm font-medium text-black transition-all hover:opacity-90 disabled:opacity-50"
+                    >
+                      {editingBlog ? "Update Blog" : "Publish Blog"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      className="rounded-lg bg-white/5 px-6 py-2.5 text-sm font-medium text-gray-300 transition-all hover:bg-white/10"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  </Form>
+                );
+              }}
+            </Formik>
+          </FormModal>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 gap-3">
         {blogs.map((blog) => (
@@ -301,10 +319,12 @@ export default function BlogsManager() {
             <div className="flex items-center space-x-4">
               {blog.image ? (
                 <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-gray-100 dark:border-gray-800">
-                  <img
+                  <Image
                     src={blog.image}
                     alt=""
-                    className="w-full h-full object-cover"
+                    width={48}
+                    height={48}
+                    className="h-full w-full object-cover"
                   />
                 </div>
               ) : (

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { FaGithub } from "react-icons/fa";
-import { HiLink, HiArrowLeft, HiClock } from "react-icons/hi2";
+import { HiLink, HiArrowLeft } from "react-icons/hi2";
 import Link from "next/link";
 import Image from "next/image";
 import Header from "../components/Header";
@@ -14,6 +14,7 @@ interface Project {
   title: string;
   description: string;
   image: string;
+  images?: string[];
   technologies: string;
   githubUrl: string;
   liveUrl: string;
@@ -32,7 +33,7 @@ export default function ProjectsPage() {
   const projects = Array.isArray(projectsData) ? projectsData : [];
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans">
+    <div className="min-h-screen bg-transparent text-foreground font-sans">
       <Header />
       <main>
         <section className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-32 pb-20">
@@ -53,7 +54,7 @@ export default function ProjectsPage() {
               Projects
             </h1>
             <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
-              A collection of projects I've built
+              A collection of projects I&apos;ve built
             </p>
           </motion.div>
 

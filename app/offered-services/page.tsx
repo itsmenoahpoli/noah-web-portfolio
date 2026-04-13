@@ -11,7 +11,7 @@ export default function OfferedServicesPage() {
   const categories = ["development", "tutorial"] as const;
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
+    <div className="min-h-screen bg-transparent text-[var(--foreground)] font-sans">
       <Header />
       <main>
         <section className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-32 pb-20">
@@ -73,7 +73,7 @@ export default function OfferedServicesPage() {
                           duration: 0.4,
                           delay: categoryIndex * 0.1 + index * 0.05,
                         }}
-                        className={`p-6 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow ${
+                        className={`rounded-2xl border border-white/15 bg-white/[0.08] p-6 shadow-lg shadow-black/10 backdrop-blur-xl transition-all hover:border-white/25 hover:bg-white/[0.12] hover:shadow-xl hover:shadow-black/20 ${
                           isDevelopmentCategory ? "flex-1" : ""
                         }`}
                       >

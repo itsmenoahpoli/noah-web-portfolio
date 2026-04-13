@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useEffect, ReactNode } from "react";
 import { getInitialTheme, setTheme, type Theme } from "@/utils/theme";
 
 interface ThemeContextType {
@@ -12,27 +12,15 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
+  const theme = getInitialTheme();
+  const mounted = true;
 
   useEffect(() => {
-    setMounted(true);
-    const initialTheme = getInitialTheme();
-    setThemeState(initialTheme);
-    setTheme(initialTheme);
-  }, []);
-
-  useEffect(() => {
-    if (mounted) {
-      setTheme(theme);
-    }
-  }, [theme, mounted]);
+    setTheme(theme);
+  }, [theme]);
 
   const toggle = () => {
-    setThemeState((prevTheme) => {
-      const newTheme = prevTheme === "dark" ? "light" : "dark";
-      return newTheme;
-    });
+    setTheme("dark");
   };
 
   return (

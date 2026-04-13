@@ -1,19 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import { AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z } from "zod";
 import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { parseApiError } from "@/lib/api-error";
-import ImageUpload from "./ImageUpload";
+import FormModal from "./FormModal";
+import ProjectImagesUpload from "./ProjectImagesUpload";
+import DashboardLoading from "./DashboardLoading";
 
 interface Project {
   id: string;
   title: string;
   description: string;
   image: string;
+  images: string[];
   technologies: string;
   githubUrl: string;
   liveUrl: string;
@@ -22,7 +27,7 @@ interface Project {
 const projectSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  image: z.string().min(1, "Image is required"),
+  images: z.array(z.string().min(1)).min(1, "At least one image is required"),
   technologies: z.string().min(1, "Technologies are required"),
   githubUrl: z.string().url("Must be a valid URL").or(z.literal("")).or(z.string().regex(/^\//)),
   liveUrl: z.string().url("Must be a valid URL").or(z.literal("")).or(z.string().regex(/^\//)),
@@ -34,6 +39,11 @@ export default function ProjectsManager() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const queryClient = useQueryClient();
+
+  const closeModal = () => {
+    setIsEditing(false);
+    setEditingProject(null);
+  };
 
   const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ["projects"],
@@ -66,8 +76,7 @@ export default function ProjectsManager() {
     onSuccess: (_, variables) => {
       toast.success(variables.id ? "Project updated" : "Project created");
       queryClient.invalidateQueries({ queryKey: ["projects"] });
-      setIsEditing(false);
-      setEditingProject(null);
+      closeModal();
     },
     onError: (err) => {
       toast.error(err instanceof Error ? err.message : "Failed to save project");
@@ -91,7 +100,7 @@ export default function ProjectsManager() {
     },
   });
 
-  if (isLoading) return <div className="text-gray-400">Loading...</div>;
+  if (isLoading) return <DashboardLoading />;
 
   return (
     <div className="space-y-8">
@@ -108,104 +117,153 @@ export default function ProjectsManager() {
         </button>
       </div>
 
-      {isEditing && (
-        <Formik
-          initialValues={{
-            title: editingProject?.title || "",
-            description: editingProject?.description || "",
-            image: editingProject?.image || "",
-            technologies: editingProject?.technologies || "",
-            githubUrl: editingProject?.githubUrl || "",
-            liveUrl: editingProject?.liveUrl || "",
-          }}
-          validationSchema={toFormikValidationSchema(projectSchema)}
-          onSubmit={(values) => mutation.mutate({ ...values, id: editingProject?.id })}
-        >
-          {({ isSubmitting, setFieldValue, values }) => (
-            <Form className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 dark:bg-black/40 p-6 rounded-xl border border-gray-100 dark:border-gray-800">
-              <div className="flex flex-col space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Title</label>
-                <Field
-                  name="title"
-                  placeholder="e.g. Portfolio Website"
-                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                />
-                <ErrorMessage name="title" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
+      <AnimatePresence>
+        {isEditing && (
+          <FormModal
+            title={editingProject ? "Edit Project" : "Create Project"}
+            description="Update the project details and save when you're ready."
+            onClose={closeModal}
+          >
+            <Formik
+              initialValues={{
+                title: editingProject?.title || "",
+                description: editingProject?.description || "",
+                images:
+                  editingProject?.images?.length
+                    ? editingProject.images
+                    : editingProject?.image
+                      ? [editingProject.image]
+                      : [],
+                technologies: editingProject?.technologies || "",
+                githubUrl: editingProject?.githubUrl || "",
+                liveUrl: editingProject?.liveUrl || "",
+              }}
+              enableReinitialize
+              validationSchema={toFormikValidationSchema(projectSchema)}
+              onSubmit={(values) =>
+                mutation.mutate({ ...values, id: editingProject?.id })
+              }
+            >
+              {({ isSubmitting, setFieldValue, values }) => (
+                <Form className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="flex flex-col space-y-2">
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Title
+                  </label>
+                  <Field
+                    name="title"
+                    placeholder="e.g. Portfolio Website"
+                    className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                  />
+                  <ErrorMessage
+                    name="title"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
+                </div>
 
-              <div className="flex flex-col space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Technologies</label>
-                <Field
-                  name="technologies"
-                  placeholder="Next.js, Tailwind, Prisma"
-                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                />
-                <ErrorMessage name="technologies" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
+                <div className="flex flex-col space-y-2">
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Technologies
+                  </label>
+                  <Field
+                    name="technologies"
+                    placeholder="Next.js, Tailwind, Prisma"
+                    className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                  />
+                  <ErrorMessage
+                    name="technologies"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
+                </div>
 
-              <div className="flex flex-col space-y-2 md:col-span-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Image</label>
-                <ImageUpload
-                  currentImage={values.image}
-                  onUpload={(path) => setFieldValue("image", path)}
-                />
-                <ErrorMessage name="image" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
+                <div className="flex flex-col space-y-2 md:col-span-2">
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Images
+                  </label>
+                  <ProjectImagesUpload
+                    currentImages={values.images}
+                    onChange={(images) => setFieldValue("images", images)}
+                  />
+                  <ErrorMessage
+                    name="images"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
+                </div>
 
-              <div className="flex flex-col space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">GitHub URL</label>
-                <Field
-                  name="githubUrl"
-                  placeholder="https://github.com/..."
-                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                />
-                <ErrorMessage name="githubUrl" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
+                <div className="flex flex-col space-y-2">
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    GitHub URL
+                  </label>
+                  <Field
+                    name="githubUrl"
+                    placeholder="https://github.com/..."
+                    className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                  />
+                  <ErrorMessage
+                    name="githubUrl"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
+                </div>
 
-              <div className="flex flex-col space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Live URL</label>
-                <Field
-                  name="liveUrl"
-                  placeholder="https://..."
-                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                />
-                <ErrorMessage name="liveUrl" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
+                <div className="flex flex-col space-y-2">
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Live URL
+                  </label>
+                  <Field
+                    name="liveUrl"
+                    placeholder="https://..."
+                    className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                  />
+                  <ErrorMessage
+                    name="liveUrl"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
+                </div>
 
-              <div className="flex flex-col space-y-2 md:col-span-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Description</label>
-                <Field
-                  as="textarea"
-                  name="description"
-                  placeholder="Briefly describe the project..."
-                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all h-32 resize-none"
-                />
-                <ErrorMessage name="description" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
+                <div className="flex flex-col space-y-2 md:col-span-2">
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Description
+                  </label>
+                  <Field
+                    as="textarea"
+                    name="description"
+                    placeholder="Briefly describe the project..."
+                    className="h-32 resize-none rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                  />
+                  <ErrorMessage
+                    name="description"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
+                </div>
 
-              <div className="flex space-x-3 md:col-span-2 pt-2">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-black dark:bg-white text-white dark:text-black px-6 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
-                >
-                  {editingProject ? "Update Project" : "Create Project"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsEditing(false);
-                    setEditingProject(null);
-                  }}
-                  className="bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/10 transition-all"
-                >
-                  Cancel
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      )}
+                <div className="flex space-x-3 pt-2 md:col-span-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="rounded-lg bg-white px-6 py-2.5 text-sm font-medium text-black transition-all hover:opacity-90 disabled:opacity-50"
+                  >
+                    {editingProject ? "Update Project" : "Create Project"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="rounded-lg bg-white/5 px-6 py-2.5 text-sm font-medium text-gray-300 transition-all hover:bg-white/10"
+                  >
+                    Cancel
+                  </button>
+                </div>
+                </Form>
+              )}
+            </Formik>
+          </FormModal>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 gap-3">
         {projects.map((project) => (
@@ -213,7 +271,13 @@ export default function ProjectsManager() {
             <div className="flex items-center space-x-4">
               {project.image ? (
                 <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-gray-100 dark:border-gray-800">
-                  <img src={project.image} alt="" className="w-full h-full object-cover" />
+                  <Image
+                    src={project.image}
+                    alt=""
+                    width={48}
+                    height={48}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
               ) : (
                 <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center shrink-0 border border-gray-100 dark:border-gray-800 text-gray-400 text-xs">

@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorMessage } from "@/lib/prisma-error";
+import {
+  getPrimaryProjectImage,
+  parseProjectImages,
+  serializeProjectImages,
+} from "@/lib/project-images";
 import { projectBodySchema } from "@/lib/validations/cms";
 
 export async function PUT(
@@ -33,13 +38,17 @@ export async function PUT(
       data: {
         title: parsed.data.title,
         description: parsed.data.description,
-        image: parsed.data.image,
+        image: serializeProjectImages(parsed.data.images),
         technologies: parsed.data.technologies,
         githubUrl: parsed.data.githubUrl,
         liveUrl: parsed.data.liveUrl,
       },
     });
-    return NextResponse.json(project);
+    return NextResponse.json({
+      ...project,
+      image: getPrimaryProjectImage(project.image),
+      images: parseProjectImages(project.image),
+    });
   } catch (error) {
     console.error("PUT /api/projects/[id]:", error);
     const isDev = process.env.NODE_ENV === "development";

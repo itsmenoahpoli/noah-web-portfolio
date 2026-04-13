@@ -8,7 +8,7 @@ export function AppToaster() {
 
   return (
     <Toaster
-      theme={mounted ? theme : "light"}
+      theme={mounted ? theme : "dark"}
       position="top-center"
       richColors
       closeButton

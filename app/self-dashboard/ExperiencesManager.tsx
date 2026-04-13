@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z } from "zod";
 import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { parseApiError } from "@/lib/api-error";
+import FormModal from "./FormModal";
+import DashboardLoading from "./DashboardLoading";
 
 interface Experience {
   id: string;
@@ -27,10 +30,17 @@ const experienceSchema = z.object({
   description: z.string().min(1, "Description is required"),
 });
 
+type ExperienceFormValues = z.infer<typeof experienceSchema>;
+
 export default function ExperiencesManager() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
   const queryClient = useQueryClient();
+
+  const closeModal = () => {
+    setIsEditing(false);
+    setEditingExperience(null);
+  };
 
   const { data: experiences = [], isLoading } = useQuery<Experience[]>({
     queryKey: ["experiences"],
@@ -46,7 +56,7 @@ export default function ExperiencesManager() {
   });
 
   const mutation = useMutation({
-    mutationFn: async (values: any) => {
+    mutationFn: async (values: ExperienceFormValues & { id?: string }) => {
       const method = values.id ? "PUT" : "POST";
       const url = values.id ? `/api/experiences/${values.id}` : "/api/experiences";
       const res = await fetch(url, {
@@ -63,8 +73,7 @@ export default function ExperiencesManager() {
     onSuccess: (_, variables) => {
       toast.success(variables.id ? "Experience updated" : "Experience added");
       queryClient.invalidateQueries({ queryKey: ["experiences"] });
-      setIsEditing(false);
-      setEditingExperience(null);
+      closeModal();
     },
     onError: (err) => {
       toast.error(err instanceof Error ? err.message : "Failed to save experience");
@@ -88,7 +97,7 @@ export default function ExperiencesManager() {
     },
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <DashboardLoading />;
 
   return (
     <div className="space-y-8">
@@ -105,106 +114,150 @@ export default function ExperiencesManager() {
         </button>
       </div>
 
-      {isEditing && (
-        <Formik
-          initialValues={{
-            company: editingExperience?.company || "",
-            position: editingExperience?.position || "",
-            location: editingExperience?.location || "",
-            startDate: editingExperience?.startDate || "",
-            endDate: editingExperience?.endDate ?? "",
-            description: editingExperience?.description || "",
-          }}
-          validationSchema={toFormikValidationSchema(experienceSchema)}
-          onSubmit={(values) => mutation.mutate({ ...values, id: editingExperience?.id })}
-        >
-          {({ isSubmitting }) => (
-            <Form className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 dark:bg-black/40 p-6 rounded-xl border border-gray-100 dark:border-gray-800">
-              <div className="flex flex-col space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Company</label>
-                <Field
-                  name="company"
-                  placeholder="Company Name"
-                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                />
-                <ErrorMessage name="company" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
-
-              <div className="flex flex-col space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Position</label>
-                <Field
-                  name="position"
-                  placeholder="Job Title"
-                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                />
-                <ErrorMessage name="position" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
-
-              <div className="flex flex-col space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Location</label>
-                <Field
-                  name="location"
-                  placeholder="e.g. Remote, New York, etc."
-                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
-                />
-                <ErrorMessage name="location" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+      <AnimatePresence>
+        {isEditing && (
+          <FormModal
+            title={editingExperience ? "Edit Experience" : "Add Experience"}
+            description="Manage work history in a focused modal form."
+            onClose={closeModal}
+          >
+            <Formik
+              initialValues={{
+                company: editingExperience?.company || "",
+                position: editingExperience?.position || "",
+                location: editingExperience?.location || "",
+                startDate: editingExperience?.startDate || "",
+                endDate: editingExperience?.endDate ?? "",
+                description: editingExperience?.description || "",
+              }}
+              enableReinitialize
+              validationSchema={toFormikValidationSchema(experienceSchema)}
+              onSubmit={(values) =>
+                mutation.mutate({ ...values, id: editingExperience?.id })
+              }
+            >
+              {({ isSubmitting }) => (
+                <Form className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Start Date</label>
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Company
+                  </label>
                   <Field
-                    name="startDate"
-                    placeholder="Jan 2023"
-                    className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
+                    name="company"
+                    placeholder="Company Name"
+                    className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
                   />
-                  <ErrorMessage name="startDate" component="div" className="text-red-500 text-[10px] font-medium" />
+                  <ErrorMessage
+                    name="company"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
                 </div>
+
                 <div className="flex flex-col space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">End Date</label>
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Position
+                  </label>
                   <Field
-                    name="endDate"
-                    placeholder="Present"
-                    className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all"
+                    name="position"
+                    placeholder="Job Title"
+                    className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
                   />
-                  <ErrorMessage name="endDate" component="div" className="text-red-500 text-[10px] font-medium" />
+                  <ErrorMessage
+                    name="position"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
                 </div>
-              </div>
 
-              <div className="flex flex-col space-y-2 md:col-span-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-500">Description</label>
-                <Field
-                  as="textarea"
-                  name="description"
-                  placeholder="Key responsibilities and achievements..."
-                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-800 p-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all h-32 resize-none"
-                />
-                <ErrorMessage name="description" component="div" className="text-red-500 text-[10px] font-medium" />
-              </div>
+                <div className="flex flex-col space-y-2">
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Location
+                  </label>
+                  <Field
+                    name="location"
+                    placeholder="e.g. Remote, New York, etc."
+                    className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                  />
+                  <ErrorMessage
+                    name="location"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
+                </div>
 
-              <div className="flex space-x-3 md:col-span-2 pt-2">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-black dark:bg-white text-white dark:text-black px-6 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
-                >
-                  {editingExperience ? "Update Experience" : "Add Experience"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsEditing(false);
-                    setEditingExperience(null);
-                  }}
-                  className="bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/10 transition-all"
-                >
-                  Cancel
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Start Date
+                    </label>
+                    <Field
+                      name="startDate"
+                      placeholder="Jan 2023"
+                      className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                    />
+                    <ErrorMessage
+                      name="startDate"
+                      component="div"
+                      className="text-[10px] font-medium text-red-500"
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                      End Date
+                    </label>
+                    <Field
+                      name="endDate"
+                      placeholder="Present"
+                      className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                    />
+                    <ErrorMessage
+                      name="endDate"
+                      component="div"
+                      className="text-[10px] font-medium text-red-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col space-y-2 md:col-span-2">
+                  <label className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Description
+                  </label>
+                  <Field
+                    as="textarea"
+                    name="description"
+                    placeholder="Key responsibilities and achievements..."
+                    className="h-32 resize-none rounded-lg border border-white/10 bg-white/5 p-3 text-sm transition-all focus:outline-none focus:ring-1 focus:ring-white"
+                  />
+                  <ErrorMessage
+                    name="description"
+                    component="div"
+                    className="text-[10px] font-medium text-red-500"
+                  />
+                </div>
+
+                <div className="flex space-x-3 pt-2 md:col-span-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="rounded-lg bg-white px-6 py-2.5 text-sm font-medium text-black transition-all hover:opacity-90 disabled:opacity-50"
+                  >
+                    {editingExperience ? "Update Experience" : "Add Experience"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="rounded-lg bg-white/5 px-6 py-2.5 text-sm font-medium text-gray-300 transition-all hover:bg-white/10"
+                  >
+                    Cancel
+                  </button>
+                </div>
+                </Form>
+              )}
+            </Formik>
+          </FormModal>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 gap-3">
         {experiences.map((exp) => (
