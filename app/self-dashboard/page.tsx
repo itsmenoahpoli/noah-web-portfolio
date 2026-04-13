@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   HiOutlineRocketLaunch,
@@ -15,6 +15,7 @@ import ProjectsManager from "./ProjectsManager";
 import BlogsManager from "./BlogsManager";
 import ExperiencesManager from "./ExperiencesManager";
 import MetricsManager from "./MetricsManager";
+import DashboardLoading from "./DashboardLoading";
 
 type DashboardTab = "metrics" | "projects" | "blogs" | "experiences";
 
@@ -25,7 +26,7 @@ const navItems = [
   { id: "experiences", label: "Experiences", icon: HiOutlineBriefcase },
 ] as const;
 
-export default function DashboardPage() {
+function DashboardPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -134,5 +135,13 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<DashboardLoading />}>
+      <DashboardPageContent />
+    </Suspense>
   );
 }
