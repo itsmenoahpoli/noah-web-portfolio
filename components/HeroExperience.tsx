@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   compareExperienceStartDates,
   formatExperienceDuration,
+  formatExperienceMonthYear,
 } from "@/lib/experience-dates";
 
 interface Experience {
@@ -50,11 +51,14 @@ export default function HeroExperience() {
           {experiences.map((exp, index) => {
             const duration = formatExperienceDuration(exp.startDate, exp.endDate);
             const isLeftAligned = index % 2 === 0;
-            const endLabel = exp.endDate?.trim() ? exp.endDate : "Present";
+            const startLabel = formatExperienceMonthYear(exp.startDate);
+            const endLabel = exp.endDate?.trim()
+              ? formatExperienceMonthYear(exp.endDate)
+              : "Present";
             const timelineMeta = exp.endDate?.trim()
               ? duration
-                ? `${endLabel} • ${duration}`
-                : endLabel
+                ? `${startLabel} - ${endLabel} • ${duration}`
+                : `${startLabel} - ${endLabel}`
               : "Present";
 
             return (
