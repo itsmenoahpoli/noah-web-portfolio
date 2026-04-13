@@ -41,10 +41,17 @@ export function RandomizedText({
   }, [children, split]);
 
   const randomizedDelays = useMemo(() => {
-    return elements.map(() =>
-      delay + Math.random() * 0.2 + Math.random() * 0.03
-    );
-  }, [elements.length, delay]);
+    return elements.map((_, index) => {
+      const seed = `${children}-${split}-${index}`;
+      let hash = 0;
+
+      for (let i = 0; i < seed.length; i += 1) {
+        hash = (hash * 31 + seed.charCodeAt(i)) % 1000;
+      }
+
+      return delay + ((hash % 20) / 100) + (((hash >> 1) % 3) / 100);
+    });
+  }, [elements, delay, children, split]);
 
   const variants = {
     hidden: { opacity: 0 },
