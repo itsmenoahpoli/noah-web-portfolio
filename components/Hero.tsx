@@ -1,10 +1,12 @@
 "use client";
 
+import type { ComponentType } from "react";
 import { HiArrowRight } from "react-icons/hi2";
 import Projects from "@/components/Projects";
 import HeroExperience from "@/components/HeroExperience";
 import { GradientWaveText } from "@/components/gradient-wave-text";
-import { RandomizedText } from "@/components/randomized-text";
+import { Marquee } from "@/components/Marquee";
+import { RandomizedText } from "@/components/RandomizedText";
 import {
   SiReact,
   SiVuedotjs,
@@ -30,6 +32,50 @@ const HERO_NAME = "Patrick Niño Noah W Policarpio";
 
 const HERO_BIO =
   "I'm a Senior Software Engineer and Tech Lead with 7+ years of experience building scalable web and mobile applications. I enjoy creating things that live on the internet, whether that be websites, applications, or anything in between. I specialize in React, Vue, Node.js, NestJS, Laravel, Python, and cloud-based architectures, and I've managed to gain a decent amount of experience and valuable knowledge from all different kinds of fields throughout my projects and work.";
+
+type TechStackItem = {
+  name: string;
+  icon: ComponentType<{ className?: string }>;
+  colorClassName: string;
+};
+
+const TECH_STACK: TechStackItem[] = [
+  { name: "React", icon: SiReact, colorClassName: "text-[#7DD3FC]" },
+  { name: "Vue.js", icon: SiVuedotjs, colorClassName: "text-[#6EE7B7]" },
+  { name: "Node.js", icon: SiNodedotjs, colorClassName: "text-[#86EFAC]" },
+  { name: "NestJS", icon: SiNestjs, colorClassName: "text-[#FB7185]" },
+  { name: "Laravel", icon: SiLaravel, colorClassName: "text-[#FF8A65]" },
+  { name: "TypeScript", icon: SiTypescript, colorClassName: "text-[#60A5FA]" },
+  { name: "JavaScript", icon: SiJavascript, colorClassName: "text-[#FDE047]" },
+  {
+    name: "Tailwind CSS",
+    icon: SiTailwindcss,
+    colorClassName: "text-[#67E8F9]",
+  },
+  {
+    name: "Next.js",
+    icon: SiNextdotjs,
+    colorClassName: "text-gray-900 dark:text-white",
+  },
+  { name: "MongoDB", icon: SiMongodb, colorClassName: "text-[#4ADE80]" },
+  {
+    name: "PostgreSQL",
+    icon: SiPostgresql,
+    colorClassName: "text-[#60A5FA]",
+  },
+  { name: "AWS", icon: SiAmazon, colorClassName: "text-[#FDBA74]" },
+  { name: "Docker", icon: SiDocker, colorClassName: "text-[#7DD3FC]" },
+  { name: "Serverless", icon: SiServerless, colorClassName: "text-[#FCA5A5]" },
+  { name: "AWS S3", icon: SiAmazons3, colorClassName: "text-[#A3E635]" },
+  { name: "Python", icon: SiPython, colorClassName: "text-[#93C5FD]" },
+  { name: "FastAPI", icon: SiFastapi, colorClassName: "text-[#5EEAD4]" },
+  { name: "Django", icon: SiDjango, colorClassName: "text-[#86EFAC]" },
+];
+
+const techStackRows = [
+  TECH_STACK.slice(0, Math.ceil(TECH_STACK.length / 2)),
+  TECH_STACK.slice(Math.ceil(TECH_STACK.length / 2)),
+];
 
 export default function Hero() {
   return (
@@ -72,115 +118,30 @@ export default function Hero() {
           <h2 className="text-sm sm:text-base font-semibold uppercase tracking-wider text-gray-500 dark:text-white mb-6">
             Tech Stack
           </h2>
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-4 sm:gap-6">
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="React"
-            >
-              <SiReact className="w-6 h-6 sm:w-8 sm:h-8 text-[#61DAFB]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="Vue.js"
-            >
-              <SiVuedotjs className="w-6 h-6 sm:w-8 sm:h-8 text-[#42b883]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="Node.js"
-            >
-              <SiNodedotjs className="w-6 h-6 sm:w-8 sm:h-8 text-[#339933]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="NestJS"
-            >
-              <SiNestjs className="w-6 h-6 sm:w-8 sm:h-8 text-[#E0234E]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="Laravel"
-            >
-              <SiLaravel className="w-6 h-6 sm:w-8 sm:h-8 text-[#FF2D20]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="TypeScript"
-            >
-              <SiTypescript className="w-6 h-6 sm:w-8 sm:h-8 text-[#3178C6]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="JavaScript"
-            >
-              <SiJavascript className="w-6 h-6 sm:w-8 sm:h-8 text-[#F7DF1E]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="Tailwind CSS"
-            >
-              <SiTailwindcss className="w-6 h-6 sm:w-8 sm:h-8 text-[#06B6D4]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="Next.js"
-            >
-              <SiNextdotjs className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 dark:text-white" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="MongoDB"
-            >
-              <SiMongodb className="w-6 h-6 sm:w-8 sm:h-8 text-[#47A248]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="PostgreSQL"
-            >
-              <SiPostgresql className="w-6 h-6 sm:w-8 sm:h-8 text-[#4169E1]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="AWS"
-            >
-              <SiAmazon className="w-6 h-6 sm:w-8 sm:h-8 text-[#FF9900]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="Docker"
-            >
-              <SiDocker className="w-6 h-6 sm:w-8 sm:h-8 text-[#2496ED]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="Serverless"
-            >
-              <SiServerless className="w-6 h-6 sm:w-8 sm:h-8 text-[#FD5750]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="AWS S3"
-            >
-              <SiAmazons3 className="w-6 h-6 sm:w-8 sm:h-8 text-[#569A31]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="Python"
-            >
-              <SiPython className="w-6 h-6 sm:w-8 sm:h-8 text-[#3776AB]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="FastAPI"
-            >
-              <SiFastapi className="w-6 h-6 sm:w-8 sm:h-8 text-[#009688]" />
-            </div>
-            <div
-              className="flex items-center justify-center p-3 sm:p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-gray-800"
-              title="Django"
-            >
-              <SiDjango className="w-6 h-6 sm:w-8 sm:h-8 text-[#092E20]" />
-            </div>
+          <div className="flex flex-col gap-4">
+            {techStackRows.map((row, index) => (
+              <Marquee
+                key={index}
+                pauseOnHover
+                direction={index % 2 === 1 ? "right" : "left"}
+                duration={index % 2 === 1 ? 26 : 22}
+                className="py-1"
+              >
+                <div className="flex gap-4 pr-4 sm:gap-6 sm:pr-6">
+                  {row.map(({ name, icon: Icon, colorClassName }) => (
+                    <div
+                      key={name}
+                      className="group flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-gray-200/80 bg-white/70 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-gray-300 hover:bg-white dark:border-slate-700/80 dark:bg-slate-950 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03)] dark:hover:border-slate-500 dark:hover:bg-slate-900 sm:h-24 sm:w-24"
+                      title={name}
+                    >
+                      <Icon
+                        className={`h-8 w-8 sm:h-10 sm:w-10 ${colorClassName} saturate-150 brightness-125 transition-transform duration-300 group-hover:scale-110 dark:brightness-150`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Marquee>
+            ))}
           </div>
         </div>
 
