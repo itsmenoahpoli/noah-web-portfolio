@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { HiArrowLeft } from "react-icons/hi2";
-import Header from "./components/Header";
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "Page not found",

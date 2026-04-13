@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { parseApiError } from "@/lib/api-error";
-import Header from "../../components/Header";
+import Header from "@/components/Header";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");

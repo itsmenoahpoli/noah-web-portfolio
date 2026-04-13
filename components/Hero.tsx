@@ -1,8 +1,8 @@
 "use client";
 
 import { HiArrowRight } from "react-icons/hi2";
-import Projects from "./Projects";
-import HeroExperience from "./HeroExperience";
+import Projects from "@/components/Projects";
+import HeroExperience from "@/components/HeroExperience";
 import { GradientWaveText } from "@/components/gradient-wave-text";
 import { RandomizedText } from "@/components/randomized-text";
 import {

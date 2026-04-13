@@ -5,7 +5,7 @@ import { FaGithub } from "react-icons/fa";
 import { HiLink, HiArrowLeft } from "react-icons/hi2";
 import Link from "next/link";
 import Image from "next/image";
-import Header from "../components/Header";
+import Header from "@/components/Header";
 import { getTagColor } from "@/utils/projects";
 import { useQuery } from "@tanstack/react-query";
 

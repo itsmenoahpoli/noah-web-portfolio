@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { HiArrowLeft } from "react-icons/hi2";
 import Link from "next/link";
-import Header from "../components/Header";
+import Header from "@/components/Header";
 import { services, getCategoryLabel } from "@/utils/services";
 import { getTagColor } from "@/utils/techColors";
 

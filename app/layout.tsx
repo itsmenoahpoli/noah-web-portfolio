@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import ProgressBar from "./components/ProgressBar";
-import Footer from "./components/Footer";
-import Cursor from "./components/AnimatedCursor";
-import QueryProvider from "./components/QueryProvider";
-import LenisProvider from "./components/LenisProvider";
-import { AppToaster } from "./components/AppToaster";
+import ProgressBar from "@/components/ProgressBar";
+import Footer from "@/components/Footer";
+import Cursor from "@/components/AnimatedCursor";
+import QueryProvider from "@/components/QueryProvider";
+import LenisProvider from "@/components/LenisProvider";
+import { AppToaster } from "@/components/AppToaster";
 import { themeScript } from "@/utils/theme-script";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { cn } from "@/lib/utils";
@@ -25,7 +25,7 @@ const inter = Inter({
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(siteUrl as string),
   title: {
     default: "Patrick Niño Noah W Policarpio",
     template: "%s | Patrick Niño Noah W Policarpio",
@@ -50,21 +50,14 @@ export const metadata: Metadata = {
     title: "Patrick Niño Noah W Policarpio",
     description:
       "Senior Software Engineer and Tech Lead with 7+ years of experience building scalable web and mobile applications.",
-    images: [
-      {
-        url: "/noah-self.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Patrick Niño Noah W Policarpio",
-      },
-    ],
+    images: ["/opengraph-image"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Patrick Niño Noah W Policarpio",
     description:
       "Senior Software Engineer and Tech Lead with 7+ years of experience building scalable web and mobile applications.",
-    images: ["/noah-self.jpg"],
+    images: ["/twitter-image"],
     creator: "@itsmenoahpoli", // User should update this
   },
   robots: {
