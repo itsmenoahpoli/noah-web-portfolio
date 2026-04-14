@@ -44,6 +44,7 @@ model Experience {
   id          String   @id @default(uuid())
   company     String
   companyLogo String?
+  sortOrder   Int      @default(0)
   categories  String[] @default([])
   position    String
   location    String
@@ -54,6 +55,7 @@ model Experience {
   updatedAt   DateTime @updatedAt
 
   @@index([startDate])
+  @@index([sortOrder])
 }
 
 model ContactSubmission {

@@ -4,7 +4,7 @@ import type { ComponentType } from "react";
 import { HiArrowRight } from "react-icons/hi2";
 import Projects from "@/components/Projects";
 import HeroExperience from "@/components/HeroExperience";
-import { GradientWaveText } from "@/components/gradient-wave-text";
+import { GradientWaveText } from "@/components/GradientWaveText";
 import { Marquee } from "@/components/Marquee";
 import { RandomizedText } from "@/components/RandomizedText";
 import {

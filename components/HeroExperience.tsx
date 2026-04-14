@@ -1,16 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import {
-  compareExperienceStartDates,
-  formatExperienceDuration,
-  formatExperienceMonthYear,
-} from "@/lib/experience-dates";
+import { formatExperienceDuration, formatExperienceMonthYear } from "@/lib/experience-dates";
 
 interface Experience {
   id: string;
   company: string;
   companyLogo: string | null;
+  sortOrder: number;
   categories: string[];
   position: string;
   startDate: string;
@@ -27,11 +24,7 @@ export default function HeroExperience() {
     },
   });
 
-  const experiences = Array.isArray(experiencesData)
-    ? [...experiencesData].sort((a, b) =>
-        compareExperienceStartDates(a.startDate, b.startDate),
-      )
-    : [];
+  const experiences = Array.isArray(experiencesData) ? experiencesData : [];
 
   return (
     <div className="mt-8 lg:mt-12">

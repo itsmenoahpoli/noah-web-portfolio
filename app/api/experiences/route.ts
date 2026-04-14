@@ -14,7 +14,7 @@ function normalizeExperience<T extends { endDate: string | null }>(experience: T
 export async function GET() {
   try {
     const experiences = await prisma.experience.findMany({
-      orderBy: { startDate: "desc" },
+      orderBy: [{ sortOrder: "asc" }, { startDate: "desc" }, { createdAt: "desc" }],
     });
     return NextResponse.json(experiences.map(normalizeExperience));
   } catch (error) {
@@ -52,10 +52,16 @@ export async function POST(request: Request) {
       );
     }
 
+    const lastExperience = await prisma.experience.findFirst({
+      select: { sortOrder: true },
+      orderBy: [{ sortOrder: "desc" }, { createdAt: "desc" }],
+    });
+
     const experience = await prisma.experience.create({
       data: {
         company: parsed.data.company,
         companyLogo: parsed.data.companyLogo,
+        sortOrder: (lastExperience?.sortOrder ?? -1) + 1,
         categories: parsed.data.categories,
         position: parsed.data.position,
         location: parsed.data.location,

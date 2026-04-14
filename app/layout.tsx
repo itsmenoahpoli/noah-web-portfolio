@@ -1,7 +1,7 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google";
 import { Suspense } from "react";
-import "./globals.css";
 import ProgressBar from "@/components/ProgressBar";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/AnimatedCursor";
@@ -11,7 +11,7 @@ import { AppToaster } from "@/components/AppToaster";
 import { themeScript } from "@/utils/theme-script";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { cn } from "@/lib/utils";
-import { DotPattern } from "@/components/ui/dot-pattern";
+import { DotPattern } from "@/components/ui/DotPattern";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
